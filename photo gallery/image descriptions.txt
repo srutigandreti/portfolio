@@ -1,0 +1,18 @@
+dog on beach: San Francisco 2026
+cows: India 2025
+bird: Chicago 2025
+Tree: Chicago 2025
+bus: San Francisco 2024
+italy: Italy 2024
+olive: Italy 2024
+Hummingbird: San Francisco 2024
+Georgia: Georgia 2024
+bee: Berkeley 2024
+seal: San Francisco 2024
+sf sunset: San Francisco 2025
+house island: San Francisco 2025
+Japanese lake: San Francisco 2025
+sun beach: San Francisco 2025
+water restaurant: India 2024
+dog: India 2024
+crane: Mexico 2025

@@ -1,0 +1,246 @@
+.root {
+  --wall: #ece4d3;
+  --ink: #2a2218;
+  --ink-soft: #5a4e3c;
+
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background-color: var(--wall);
+  color: var(--ink);
+  font-family:
+    ui-serif, Georgia, "Iowan Old Style", "Apple Garamond", Baskerville, serif;
+  isolation: isolate;
+  cursor: grab;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.root::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.root:active {
+  cursor: grabbing;
+}
+
+/* The wall is a fixed, oversized canvas that the user can scroll around.
+   Hidden until the centering effect has run so the user never sees the
+   (0, 0) corner state during hydration. */
+.wall {
+  position: relative;
+  width: 2800px;
+  height: 2000px;
+  opacity: 0;
+  transition: opacity 220ms ease-out;
+  background-color: var(--wall);
+  /* No texture/gradient — uniform color, identical to .root, so the wall
+     edge is invisible color-wise even if a shadow drifts past it. */
+}
+
+.wall.ready {
+  opacity: 1;
+}
+
+@media (max-width: 900px) {
+  .wall {
+    width: 1900px;
+    height: 2700px;
+  }
+}
+
+@media (max-width: 560px) {
+  .wall {
+    width: 1300px;
+    height: 3400px;
+  }
+}
+
+/* ─────── Photo card ─────── */
+.photo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  touch-action: none;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.photo.dragging {
+  cursor: grabbing;
+  z-index: 100;
+}
+
+/* Photo is just the image with a drop shadow — no paper border. */
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  filter: saturate(0.94) contrast(0.98);
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.1),
+    0 4px 10px rgba(30, 20, 8, 0.18),
+    0 14px 28px rgba(30, 20, 8, 0.14),
+    0 28px 50px rgba(30, 20, 8, 0.08);
+  transition:
+    box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.photo:hover .image {
+  box-shadow:
+    0 2px 2px rgba(0, 0, 0, 0.12),
+    0 8px 18px rgba(30, 20, 8, 0.24),
+    0 22px 40px rgba(30, 20, 8, 0.16),
+    0 40px 70px rgba(30, 20, 8, 0.1);
+}
+
+.photo.dragging .image {
+  box-shadow:
+    0 6px 6px rgba(0, 0, 0, 0.14),
+    0 20px 36px rgba(30, 20, 8, 0.36),
+    0 40px 70px rgba(30, 20, 8, 0.24),
+    0 70px 110px rgba(30, 20, 8, 0.16);
+  transform: scale(1.06);
+}
+
+/* ─────── Tape ─────── */
+.tape {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  margin-left: -65px;
+  width: 130px;
+  height: 36px;
+  pointer-events: none;
+  transform-origin: 50% 0%;
+  z-index: 2;
+  background-color: rgba(255, 252, 240, 0.42);
+  background-image: url("/playground/tape-flat.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-blend-mode: lighten;
+  border-radius: 1px;
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.06),
+    0 2px 4px rgba(40, 28, 16, 0.06);
+  /* subtle gloss gradient */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(255, 252, 240, 0.35) 40%,
+      rgba(255, 252, 240, 0.42) 100%
+    ),
+    url("/playground/tape-flat.png") center / cover no-repeat;
+  transition:
+    transform 380ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-image 200ms ease;
+}
+
+/* Soft edges so the tape feathers into the photo */
+.tape::before,
+.tape::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+}
+
+.tape::before {
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 252, 240, 0) 0%,
+    rgba(255, 252, 240, 0.45) 100%
+  );
+}
+
+.tape::after {
+  right: 0;
+  background: linear-gradient(
+    -90deg,
+    rgba(255, 252, 240, 0) 0%,
+    rgba(255, 252, 240, 0.45) 100%
+  );
+}
+
+/* Peeled state: tape lifts at its bottom edge with curl image swapped in */
+.photo.dragging .tape {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(255, 252, 240, 0.4) 40%,
+      rgba(255, 252, 240, 0.5) 100%
+    ),
+    url("/playground/tape-peeled.png") center / cover no-repeat;
+  transform: translateY(-3px) rotate(-6deg);
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.14),
+    0 8px 14px rgba(40, 28, 16, 0.18);
+}
+
+/* ─────── Caption (hover-only; hidden during grab / drag / idle) ─────── */
+.caption {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%) translateY(8px);
+  white-space: nowrap;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 240ms ease,
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.photo:hover .caption {
+  opacity: 1;
+  transform: translateX(-50%) translateY(14px);
+}
+
+/* While grabbing or dragging, the caption stays hidden even though :hover may still apply. */
+.photo.dragging .caption {
+  opacity: 0;
+  transform: translateX(-50%) translateY(8px);
+}
+
+/* ─────── Hint (subtle, fixed to viewport) ─────── */
+.hint {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  pointer-events: none;
+  background: rgba(236, 228, 211, 0.9);
+  padding: 8px 16px 8px 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(40, 28, 16, 0.08);
+}
