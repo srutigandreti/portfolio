@@ -43,10 +43,9 @@ export default function MysaCaseStudy() {
         </div>
       </div>
 
-      {/* ── Page content wrapper: 1400px max, 60px gutter ──────────────── */}
-      <div className="max-w-[1400px] mx-auto px-6 md:px-[60px]">
-        {/* ── Text content: narrows to 850px, centered ──────────────────── */}
-        <main className="max-w-[850px] mx-auto pt-14 pb-0">
+      {/* ── Page content wrapper: 1000px max, 60px gutter ──────────────── */}
+      <div className="max-w-[1000px] mx-auto px-6 md:px-[60px]">
+        <main className="pt-14 pb-0">
           {/* Title */}
           <h1
             className="font-display font-light leading-tight mb-6"
@@ -272,7 +271,7 @@ export default function MysaCaseStudy() {
         </div>
 
         {/* ── Visual System ─────────────────────────────────────────────── */}
-        <div className="max-w-[850px] mx-auto mt-8">
+        <div className="mt-8">
           <section>
             <h2
               className="font-display font-medium mb-4"
@@ -302,60 +301,292 @@ export default function MysaCaseStudy() {
             </p>
           </section>
 
-          {/* ── Logo version grid ─────────────────────────────────── */}
-          <div className="grid grid-cols-3 gap-10 mt-10">
-            {[
-              {
-                v: "v.1",
-                src: "/images/mysa-logo-v1.png",
-                note: 'tested the heart-shaped "m"',
-              },
-              {
-                v: "v.2",
-                src: "/images/mysa-logo-v2.png",
-                note: 'handwritten look? trying to make the "m" more obvious',
-              },
-              {
-                v: "v.3",
-                src: "/images/mysa-logo-v3.png",
-                note: "getting closer but needs more cohesion",
-              },
-            ].map(({ v, src, note }) => (
-              <div key={v} className="flex flex-col">
+          {/* ── Logo versions (combined image) ────────────────────── */}
+          <div className="mt-10">
+            {/* v.1 / v.2 / v.3 labels above */}
+            <div className="grid grid-cols-3 mb-3">
+              {["v.1", "v.2", "v.3"].map((v) => (
                 <span
+                  key={v}
                   style={{
                     fontFamily: '"PPNeueMontreal", sans-serif',
                     fontWeight: 400,
                     fontSize: "0.8rem",
                     color: "#5e5e5e",
-                    marginBottom: "0.6rem",
                   }}
                 >
                   {v}
                 </span>
-                <div className="relative w-full" style={{ aspectRatio: "4/3" }}>
-                  <Image
-                    src={src}
-                    alt={`Mysa logo ${v}`}
-                    fill
-                    className="object-contain object-left"
-                    sizes="(max-width: 768px) 90vw, 28vw"
-                  />
-                </div>
+              ))}
+            </div>
+
+            <Image
+              src="/images/mysa-versions.png"
+              alt="Mysa logo versions v.1, v.2, v.3"
+              width={6734}
+              height={1188}
+              className="w-full h-auto block"
+              unoptimized
+            />
+
+            {/* Handwritten notes below */}
+            <div className="grid grid-cols-3 mt-3">
+              {[
+                'tested the heart-shaped "m"',
+                'handwritten look? trying to make the "m" more obvious',
+                "getting closer but needs more cohesion",
+              ].map((note) => (
                 <p
+                  key={note}
                   style={{
                     fontFamily: "var(--font-grape-nuts), cursive",
                     fontSize: "0.95rem",
                     color: "#5e5e5e",
                     lineHeight: 1.4,
-                    marginTop: "0.6rem",
                   }}
                 >
                   {note}
                 </p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
+        </div>
+
+        {/* ── Logo on colors ────────────────────────────────────────────── */}
+        <div className="mt-8">
+          <Image
+            src="/images/mysa-on-colors.png"
+            alt="Mysa logo on white, green, and sky"
+            width={2808}
+            height={1794}
+            className="w-full h-auto block"
+            unoptimized
+          />
+        </div>
+
+        {/* ── Typography and Color ───────────────────────────────────────── */}
+        <div className="mt-14">
+          <section>
+            <h2
+              className="font-display font-medium mb-6"
+              style={{ fontSize: "1rem", color: "#8b6b41" }}
+            >
+              Typography and Color
+            </h2>
+            <p
+              style={{
+                fontFamily: "var(--font-poppins), sans-serif",
+                fontWeight: 400,
+                fontSize: "clamp(1rem, 1.625vw, 1.125rem)",
+                color: "#5e5e5e",
+                marginBottom: "0.5rem",
+              }}
+            >
+              Headers &amp; Body: Poppins
+            </p>
+            <p
+              style={{
+                fontFamily: '"GT Super Display", serif',
+                fontWeight: 300,
+                fontStyle: "italic",
+                fontSize: "clamp(1rem, 1.625vw, 1.125rem)",
+                color: "#5e5e5e",
+              }}
+            >
+              Accent: GT Super Display (Light Italic)
+            </p>
+
+            {/* Primary + secondary cards side by side */}
+            <div className="flex gap-4 mt-8">
+              <Image
+                src="/images/mysa-primary.png"
+                alt="Mysa primary card"
+                width={4212}
+                height={2286}
+                className="w-1/2 h-auto block"
+                unoptimized
+              />
+              <Image
+                src="/images/mysa-secondary.png"
+                alt="Mysa secondary card"
+                width={4212}
+                height={2286}
+                className="w-1/2 h-auto block"
+                unoptimized
+              />
+            </div>
+
+            {/* Business card + ad — flex-grow proportional to native widths
+                so both images share the same rendered height */}
+            <div className="flex gap-4 mt-4">
+              <div style={{ flex: "9 1 0%" }}>
+                <Image
+                  src="/images/mysa-business-card.png"
+                  alt="Mysa business card"
+                  width={1802}
+                  height={1802}
+                  className="w-full h-auto block"
+                  unoptimized
+                />
+              </div>
+              <div style={{ flex: "5 1 0%" }}>
+                <Image
+                  src="/images/mysa-ad.png"
+                  alt="Mysa ad"
+                  width={1004}
+                  height={1802}
+                  className="w-full h-auto block"
+                  unoptimized
+                />
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* ── Results ───────────────────────────────────────────────────── */}
+        <div className="mt-14 pb-20">
+          <h2
+            className="font-display font-medium mb-10"
+            style={{ fontSize: "1rem", color: "#8b6b41" }}
+          >
+            Results?
+          </h2>
+
+          {/* Stats */}
+          <div className="flex gap-12 md:gap-20 mb-14">
+            <div>
+              <p
+                className="font-sans font-bold leading-none"
+                style={{
+                  fontSize: "clamp(2.6rem, 7.5vw, 5rem)",
+                  letterSpacing: "-0.025em",
+                  color: "#1a1a1a",
+                }}
+              >
+                15k+
+              </p>
+              <div
+                className="mt-2"
+                style={{
+                  fontSize: "clamp(0.525rem, 1.5vw, 1rem)",
+                  color: "#5e5e5e",
+                }}
+              >
+                <p className="font-sans font-normal">sign-ups</p>
+                <p className="font-sans font-normal">1 month of launch</p>
+              </div>
+            </div>
+
+            <div>
+              <p
+                className="font-sans font-bold leading-none"
+                style={{
+                  fontSize: "clamp(2.6rem, 7.5vw, 5rem)",
+                  letterSpacing: "-0.025em",
+                  color: "#1a1a1a",
+                }}
+              >
+                25k+
+              </p>
+              <div
+                className="mt-2"
+                style={{
+                  fontSize: "clamp(0.525rem, 1.5vw, 1rem)",
+                  color: "#5e5e5e",
+                }}
+              >
+                <p className="font-sans font-normal">sign-ups currently</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Quote */}
+          <p
+            className="font-sans font-bold"
+            style={{
+              fontSize: "clamp(2.6rem, 7.5vw, 5rem)",
+              letterSpacing: "-0.025em",
+              lineHeight: "1.05",
+              color: "#1a1a1a",
+            }}
+          >
+            &ldquo;Feels different from every other dating app&rdquo;
+          </p>
+          <p
+            className="font-sans font-normal mt-3"
+            style={{
+              fontSize: "clamp(0.875rem, 1.325vw, 0.975rem)",
+              color: "#5e5e5e",
+            }}
+          >
+            repeated user feedback received about Mysa
+          </p>
+        </div>
+
+        {/* ── Reflections ───────────────────────────────────────────────── */}
+        <div className="mt-14 pb-24">
+          <h2
+            className="font-display font-medium mb-10"
+            style={{ fontSize: "1rem", color: "#8b6b41" }}
+          >
+            Reflections
+          </h2>
+
+          <section className="mb-10">
+            <p
+              className="font-sans font-normal leading-relaxed mb-4"
+              style={{
+                fontSize: "clamp(1rem, 1.625vw, 1.125rem)",
+                color: "#5e5e5e",
+              }}
+            >
+              Building the brand from 0
+            </p>
+            <p
+              className="font-sans font-normal leading-relaxed"
+              style={{
+                fontSize: "clamp(0.875rem, 1.325vw, 0.975rem)",
+                color: "#5e5e5e",
+              }}
+            >
+              Designing a brand from scratch came with an exciting amount of
+              creative freedom but also the pressure of owning every decision.
+              With no existing system to build from, I had total responsibility
+              over the visual direction, which meant every choice needed to feel
+              both beautiful and strategically aligned with Ankitha&apos;s
+              vision for the app. It pushed me to think beyond aesthetics and
+              design a brand identity that felt emotionally resonant, memorable,
+              and purposeful from the ground up.
+            </p>
+          </section>
+
+          <section>
+            <p
+              className="font-sans font-normal leading-relaxed mb-4"
+              style={{
+                fontSize: "clamp(1rem, 1.625vw, 1.125rem)",
+                color: "#5e5e5e",
+              }}
+            >
+              Art of Collaboration
+            </p>
+            <p
+              className="font-sans font-normal leading-relaxed"
+              style={{
+                fontSize: "clamp(0.875rem, 1.325vw, 0.975rem)",
+                color: "#5e5e5e",
+              }}
+            >
+              This process involved constant collaboration, feedback loops, and
+              refining ideas until they truly clicked. Ankitha and I worked
+              closely together throughout the branding process, especially when
+              shaping the final logo, balancing her vision with thoughtful
+              design decisions that would scale across the product experience.
+              The back-and-forth was challenging at times, but it ultimately
+              made the outcome feel far more aligned, intentional, and
+              rewarding.
+            </p>
+          </section>
         </div>
       </div>
 

@@ -76,7 +76,7 @@ export default function MysaPillars() {
 
   return (
     <section ref={sectionRef} className="w-full px-6 md:px-10 lg:px-16 py-16">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-6 max-w-[1400px] mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-6 max-w-[1000px] mx-auto">
         {/* ── Panel 1: Warmth over urgency ──────────────────────────────── */}
         <div>
           <PillarHeader>{PILLARS[0]}</PillarHeader>
@@ -131,9 +131,8 @@ export default function MysaPillars() {
             {/* Layer A: header + 3×3 headshot grid */}
             <div className="absolute inset-0 p-[7%] flex flex-col gap-[4%]">
               <h4
-                className={`mysa-p2-grid-base font-sans font-medium text-left ${inView ? "mysa-p2-header" : ""}`}
+                className={`mysa-p2-upgrade mysa-p2-grid-base font-sans font-medium text-left ${inView ? "mysa-p2-header" : ""}`}
                 style={{
-                  fontSize: "clamp(0.55rem, 1.1vw, 0.8rem)",
                   color: "#1a1a1a",
                   letterSpacing: "-0.005em",
                 }}
@@ -215,12 +214,12 @@ export default function MysaPillars() {
                 }}
               >
                 <p
+                  className="mysa-ellipse-title"
                   style={{
                     fontFamily: '"GT Super Display", serif',
                     fontWeight: 300,
                     fontStyle: "italic",
                     color: "rgba(255,255,255,0.85)",
-                    fontSize: "clamp(0.675rem, 1.275vw, 0.975rem)",
                     textAlign: "center",
                     lineHeight: 1.2,
                   }}
@@ -228,11 +227,11 @@ export default function MysaPillars() {
                   You matched because
                 </p>
                 <p
+                  className="mysa-ellipse-body"
                   style={{
                     fontFamily: "var(--font-poppins), sans-serif",
                     fontWeight: 500,
                     color: "white",
-                    fontSize: "clamp(0.525rem, 0.893vw, 0.683rem)",
                     lineHeight: 1.5,
                     textAlign: "center",
                   }}
@@ -336,22 +335,22 @@ export default function MysaPillars() {
               {/* Compatibility caption — Poppins medium for headline, regular for sub */}
               <div className="text-center mt-1">
                 <p
+                  className="mysa-p3-compat-title"
                   style={{
                     fontFamily: "var(--font-poppins), sans-serif",
                     fontWeight: 500,
                     color: "#9CA000",
-                    fontSize: "clamp(0.86rem, 1.725vw, 1.265rem)",
                     letterSpacing: "-0.01em",
                   }}
                 >
                   91% compatibility
                 </p>
                 <p
+                  className="mysa-p3-compat-sub"
                   style={{
                     fontFamily: "var(--font-poppins), sans-serif",
                     fontWeight: 400,
                     color: "#B7BA01",
-                    fontSize: "clamp(0.575rem, 1.09vw, 0.828rem)",
                   }}
                 >
                   on what matters

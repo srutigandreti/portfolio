@@ -7,7 +7,8 @@ import { useRouter } from "next/navigation";
 interface HotSpot {
   id: string;
   label: string;
-  href: string;
+  sublabel?: string;
+  href?: string;
   /* percentage-based position relative to the illustration container */
   top: string;
   left: string;
@@ -24,6 +25,15 @@ const hotspots: HotSpot[] = [
     left: "57%",
     width: "25%",
     height: "34%",
+  },
+  {
+    id: "potteryshelf",
+    label: "Pottery Shelf",
+    sublabel: "Coming Soon",
+    top: "20%",
+    left: "5%",
+    width: "30%",
+    height: "42%",
   },
 ];
 
@@ -45,7 +55,7 @@ export default function CornerRoom() {
       {hotspots.map((spot) => (
         <div
           key={spot.id}
-          className="absolute cursor-pointer"
+          className={`absolute ${spot.href ? "cursor-pointer" : "cursor-default"}`}
           style={{
             top: spot.top,
             left: spot.left,
@@ -55,12 +65,13 @@ export default function CornerRoom() {
           onMouseEnter={() => setActive(spot.id)}
           onMouseLeave={() => setActive(null)}
           onClick={() => {
+            if (!spot.href) return;
             if ("startViewTransition" in document) {
               (
                 document as Document & {
                   startViewTransition: (cb: () => void) => void;
                 }
-              ).startViewTransition(() => router.push(spot.href));
+              ).startViewTransition(() => router.push(spot.href!));
             } else {
               router.push(spot.href);
             }
@@ -70,20 +81,28 @@ export default function CornerRoom() {
           <div
             className={`
               absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-              text-white font-sans font-normal
-              text-[17px] tracking-[0.04em] whitespace-nowrap
+              text-white font-sans font-normal text-center
+              text-[17px] tracking-[0.04em]
               rounded-[22px]
               transition-all duration-200 ease-out pointer-events-none
               ${active === spot.id ? "opacity-100 scale-100" : "opacity-0 scale-95"}
             `}
             style={{
               background: "rgba(90,46,27,0.8)",
-              padding: "14px 22px",
+              padding: spot.sublabel ? "8px 22px" : "14px 22px",
               fontFamily:
                 '"PPNeueMontreal", ui-sans-serif, system-ui, sans-serif',
             }}
           >
-            {spot.label}
+            <span className="block whitespace-nowrap">{spot.label}</span>
+            {spot.sublabel && (
+              <span
+                className="block whitespace-nowrap italic"
+                style={{ fontSize: "9px", opacity: 0.8, marginTop: "2px" }}
+              >
+                {spot.sublabel}
+              </span>
+            )}
           </div>
         </div>
       ))}
