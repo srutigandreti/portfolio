@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "PowerShell(npm run type-check 2>&1)",
-      "PowerShell(npx next typegen 2>&1)"
+      "PowerShell(npx next typegen 2>&1)",
+      "Bash(npx tsc *)",
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(\"C:\\\\Users\\\\sruti gandreti\\\\Desktop\\\\design portfolio\\\\Mysa Banner.png\"\\); Write-Host \"W: $\\($img.Width\\)  H: $\\($img.Height\\)\"; $img.Dispose\\(\\))"
     ]
   }
 }

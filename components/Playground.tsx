@@ -9,6 +9,7 @@ import {
   type CSSProperties,
   type PointerEvent as ReactPointerEvent,
 } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./Playground.module.css";
 
 // useLayoutEffect on the server logs a warning; alias to useEffect for SSR.
@@ -288,6 +289,7 @@ function clampOffset(
 }
 
 export default function Playground() {
+  const router = useRouter();
   const rootRef = useRef<HTMLDivElement | null>(null);
   const wallRef = useRef<HTMLDivElement | null>(null);
   const [offsets, setOffsets] = useState<Record<string, Offset>>({});
@@ -565,6 +567,24 @@ export default function Playground() {
     };
   }, [carriedId, applyCarryDelta]);
 
+  // ESC key exits back to the playground landing page
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      if ("startViewTransition" in document) {
+        (
+          document as Document & {
+            startViewTransition: (cb: () => void) => void;
+          }
+        ).startViewTransition(() => router.push("/playground"));
+      } else {
+        router.push("/playground");
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [router]);
+
   // Center the initial scroll exactly on the wall on first mount, before the
   // browser paints the hydrated DOM, so the user never sees the (0, 0) state.
   useIsoLayoutEffect(() => {
@@ -624,7 +644,26 @@ export default function Playground() {
           );
         })}
       </div>
-      <div className={styles.hint}>Tap / drag pic to move</div>
+      <div className={styles.hint}>
+        Tap / drag to move pics ·{" "}
+        <kbd
+          style={{
+            display: "inline-block",
+            fontFamily: "inherit",
+            fontSize: "0.6rem",
+            lineHeight: 1,
+            padding: "2px 5px",
+            border: "1px solid currentColor",
+            borderRadius: "4px",
+            boxShadow: "0 2px 0 currentColor",
+            marginRight: "2px",
+            verticalAlign: "middle",
+          }}
+        >
+          ESC
+        </kbd>{" "}
+        to exit
+      </div>
     </div>
   );
 }

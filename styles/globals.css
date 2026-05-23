@@ -1,3 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  --color-beige: #eeebe3;
+  --color-ink: #5e5e5e;
+  --color-ink-muted: #5e5e5e;
+  --color-brown: #8b6b41;
+  --color-tagline: #5a4223;
+
+  --font-sans: "PPNeueMontreal", ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-retrogression), cursive;
+  --font-display: var(--font-unbounded), ui-sans-serif, sans-serif;
+}
+
 *,
 *::before,
 *::after {
@@ -8,12 +22,18 @@ html,
 body {
   margin: 0;
   padding: 0;
+  scroll-behavior: smooth;
 }
 
 body {
   min-height: 100vh;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  background-color: var(--color-beige);
+  font-family: "PPNeueMontreal", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+  font-synthesis: none;
+  color: #5e5e5e;
 }
 
 img,
@@ -23,6 +43,13 @@ canvas,
 svg {
   display: block;
   max-width: 100%;
+}
+
+img {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 input,
@@ -35,4 +62,691 @@ select {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+@keyframes dissolve-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dissolve-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+::view-transition-old(root) {
+  animation: dissolve-out 300ms ease-out;
+}
+
+::view-transition-new(root) {
+  animation: dissolve-in 300ms ease-in;
+}
+
+.hero-envelope {
+  width: 360px;
+}
+
+@media (min-width: 1024px) {
+  .hero-envelope {
+    width: 480px;
+  }
+}
+
+.flip-inner {
+  position: relative;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transition: transform 0.3s ease-out;
+}
+
+.group:hover .flip-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-front {
+  display: block;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0.1px);
+  -webkit-transform: translateZ(0.1px);
+}
+
+.flip-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: rotateY(180deg) translateZ(0.1px);
+  -webkit-transform: rotateY(180deg) translateZ(0.1px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MYSA PILLARS  —  3-panel looping animation showcase
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Panel 1: "Warmth over urgency"
+   5-card stack slides up & out, single Mysa notification slides up from below.
+   Two stacked absolute layers; overflow:hidden on parent clips the off-screen jumps. */
+@keyframes mysa-p1-cards {
+  0% {
+    transform: translateY(0);
+  }
+  22% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.6, 0, 0.4, 1);
+  }
+  38% {
+    transform: translateY(-100%);
+    animation-timing-function: step-end;
+  }
+  85% {
+    transform: translateY(100%);
+    animation-timing-function: cubic-bezier(0.34, 1.18, 0.64, 1);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes mysa-p1-mysa {
+  0% {
+    transform: translateY(100%);
+  }
+  38% {
+    transform: translateY(100%);
+    animation-timing-function: cubic-bezier(0.34, 1.18, 0.64, 1);
+  }
+  54% {
+    transform: translateY(0);
+  }
+  72% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.6, 0, 0.4, 1);
+  }
+  85% {
+    transform: translateY(-100%);
+    animation-timing-function: step-end;
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* Static "hidden below" state — applied always so out-of-view default keeps Mysa hidden */
+.mysa-p1-mysa-base {
+  transform: translateY(100%);
+}
+
+/* Animation classes — added/removed via IntersectionObserver so animation restarts at 0% on re-entry */
+.mysa-p1-cards {
+  animation: mysa-p1-cards 8s infinite;
+  will-change: transform;
+}
+
+.mysa-p1-mysa {
+  animation: mysa-p1-mysa 8s infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mysa-p1-cards,
+  .mysa-p1-mysa {
+    animation: none !important;
+  }
+  .mysa-p1-mysa-base {
+    /* In reduced motion, only show the static "before" state — cards visible, Mysa hidden */
+    transform: translateY(100%) !important;
+  }
+}
+
+/* ── Panel 2: "Transparency always" ───────────────────────────────────
+   5s cycle synced 1:1 with Panel 1. Keyframe percentages match Panel 1's
+   transition windows so all panels enter/exit their "main visual" together.
+
+   Sync points (5s = 5000ms):
+     0–18%  (0–900ms)   visible / hold     ←→ P1 cards visible
+     18–30% (900–1500)  fade out           ←→ P1 cards slide up & out
+     30–42% (1500–2100) empty / gap        ←→ P1 empty gap
+     42–54% (2100–2700) match enters       ←→ P1 Mysa slides up in
+     54–70% (2700–3500) match visible      ←→ P1 Mysa visible
+     70–80% (3500–4000) match exits        ←→ P1 Mysa slides up & out
+     85–100%(4250–5000) grid returns       ←→ P1 cards return from below
+*/
+
+/* Header text — fades in & out as one piece, synced with the headshot trickle.
+   No return phase — stays hidden after fade-out so the next cycle's trickle is
+   the first visible event (not a snap-then-trickle sequence). */
+@keyframes mysa-p2-header {
+  0% {
+    opacity: 1;
+  }
+  22% {
+    opacity: 1;
+  }
+  38% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Per-headshot keyframes — pure opacity, no scale/translate.
+   Each element offset via inline animation-delay (i × 40ms) for staggered trickle.
+   No return phase so headshots stay hidden 38–100% — the next loop iteration's
+   0–12% trickle becomes the first visible event of the cycle. */
+@keyframes mysa-p2-headshot {
+  0% {
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  22% {
+    opacity: 1;
+  }
+  38% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Match-state layers — fade IN starts at 32% (overlapping grid's fade-out at 22–38%)
+   so there's no empty cream gap. Match-state fades OUT starts at 72% overlapping
+   grid's fade-back-in at 78–92%. */
+@keyframes mysa-p2-match-header {
+  0%,
+  32% {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  42% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  72% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  82% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes mysa-p2-match-card {
+  0%,
+  36% {
+    opacity: 0;
+    transform: translateY(8%);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  72% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  82% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes mysa-p2-ellipse {
+  0%,
+  42% {
+    opacity: 0;
+    transform: translateY(10%);
+  }
+  56% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  72% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  82% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Header defaults visible so grid is shown at rest */
+.mysa-p2-grid-base {
+  opacity: 1;
+}
+/* Headshots default invisible — trickle in animates them to visible */
+.mysa-p2-headshot-base {
+  opacity: 0;
+}
+/* Match-card layer defaults hidden — only revealed during the mid-cycle window */
+.mysa-p2-match-base {
+  opacity: 0;
+}
+
+.mysa-p2-header {
+  animation: mysa-p2-header 8s infinite ease-in-out;
+  will-change: opacity;
+}
+.mysa-p2-headshot {
+  animation: mysa-p2-headshot 8s infinite ease-out;
+  will-change: opacity, transform;
+}
+.mysa-p2-match-header {
+  animation: mysa-p2-match-header 8s infinite ease-in-out;
+  will-change: opacity, transform;
+}
+.mysa-p2-match-card {
+  animation: mysa-p2-match-card 8s infinite cubic-bezier(0.34, 1.18, 0.64, 1);
+  will-change: opacity, transform;
+}
+.mysa-p2-ellipse {
+  animation: mysa-p2-ellipse 8s infinite cubic-bezier(0.34, 1.18, 0.64, 1);
+  will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mysa-p2-header,
+  .mysa-p2-headshot,
+  .mysa-p2-match-header,
+  .mysa-p2-match-card,
+  .mysa-p2-ellipse {
+    animation: none !important;
+    transform: none !important;
+  }
+  .mysa-p2-match-base {
+    opacity: 0 !important;
+  }
+  .mysa-p2-grid-base {
+    opacity: 1 !important;
+  }
+  .mysa-p2-headshot-base {
+    opacity: 1 !important;
+  }
+}
+
+/* ── Panel 3: "Compatibility over volume" ─────────────────────────────
+   5s cycle synced 1:1 with Panels 1 & 2. State A = 50+ photocard stack with
+   shimmer on the badge. State B = orb that fills with yellow + "91% compatibility".
+
+   Sync points (5s = 5000ms):
+     0–18%   visible / hold       ←→ P1 cards / P2 grid
+     18–30%  State A exits        ←→ P1 cards exit / P2 grid fades
+     42–54%  State B enters       ←→ P1 Mysa enters / P2 match enters
+     54–70%  State B visible      (orb fill plays during this window)
+     70–80%  State B exits        ←→ P1 Mysa exits
+     85–100% State A returns
+*/
+
+@keyframes mysa-p3-card {
+  0%,
+  22% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  38% {
+    opacity: 0;
+    transform: translateY(-3%);
+  }
+  78% {
+    opacity: 0;
+    transform: translateY(3%);
+  }
+  92% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes mysa-p3-orb {
+  0%,
+  36% {
+    opacity: 0;
+    transform: translateY(6%);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  72% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  82% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Yellow fill rises like water filling a glass — the image stays in place,
+   clip-path uncovers it from the bottom up. inset(top right bottom left).
+   inset(100% 0 0 0) = fully clipped (no yellow shown).
+   inset(0 0 0 0)    = fully revealed (yellow fills the orb). */
+@keyframes mysa-p3-orb-fill {
+  0%,
+  42% {
+    clip-path: inset(100% 0 0 0);
+  }
+  68% {
+    clip-path: inset(0 0 0 0);
+  }
+  82% {
+    clip-path: inset(0 0 0 0);
+    animation-timing-function: step-end;
+  }
+  100% {
+    clip-path: inset(100% 0 0 0);
+  }
+}
+
+/* Shimmer stripe — sweeps across the "50+" badge while State A is visible */
+@keyframes mysa-p3-shine {
+  0% {
+    transform: translateX(-160%) skewX(-22deg);
+  }
+  100% {
+    transform: translateX(260%) skewX(-22deg);
+  }
+}
+
+.mysa-p3-card-base {
+  opacity: 1;
+}
+.mysa-p3-orb-base {
+  opacity: 0;
+}
+.mysa-p3-fill-base {
+  clip-path: inset(100% 0 0 0);
+}
+
+.mysa-p3-card {
+  animation: mysa-p3-card 8s infinite ease-in-out;
+  will-change: opacity, transform;
+}
+.mysa-p3-orb {
+  animation: mysa-p3-orb 8s infinite cubic-bezier(0.34, 1.18, 0.64, 1);
+  will-change: opacity, transform;
+}
+.mysa-p3-orb-fill {
+  animation: mysa-p3-orb-fill 8s infinite cubic-bezier(0.5, 0.05, 0.25, 1);
+  will-change: clip-path;
+}
+.mysa-p3-shine {
+  animation: mysa-p3-shine 2s infinite linear;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mysa-p3-card,
+  .mysa-p3-orb,
+  .mysa-p3-orb-fill,
+  .mysa-p3-shine {
+    animation: none !important;
+    transform: none !important;
+  }
+  .mysa-p3-card-base {
+    opacity: 1 !important;
+  }
+  .mysa-p3-orb-base {
+    opacity: 0 !important;
+  }
+  .mysa-p3-fill-base {
+    clip-path: inset(0 0 0 0) !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   POSTCARD GRID  —  flip-on-hover, responsive, accessible
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Container ──────────────────────────────────────────────────── */
+.postcard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 120px 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 80px;
+}
+
+/* ─── Card shell ──────────────────────────────────────────────────── */
+.postcard-grid .pc-card {
+  /* CSS custom props carry the per-card rotation so hover can extend it */
+  --rot: 0deg;
+  --ty: 0px;
+
+  position: relative;
+  width: 500px;
+  aspect-ratio: 500 / 318.39;
+  cursor: pointer;
+  outline: none;
+  transform: rotate(var(--rot)) translateY(var(--ty));
+  transition:
+    transform 0.35s ease,
+    z-index 0s;
+  z-index: 1;
+}
+
+/* Hover / focus / JS-toggled: add scale, bump z */
+.postcard-grid .pc-card:hover,
+.postcard-grid .pc-card:focus-within,
+.postcard-grid .pc-card[aria-expanded="true"] {
+  transform: rotate(var(--rot)) translateY(var(--ty)) scale(1.02);
+  z-index: 10;
+  transition: transform 0.35s ease;
+}
+
+/* ─── Rotation pattern ────────────────────────────────────────────── */
+/* Row 1 */
+.postcard-grid .pc-card:nth-child(1) {
+  --rot: -3deg;
+  --ty: 20px;
+  justify-self: end;
+}
+.postcard-grid .pc-card:nth-child(2) {
+  --rot: 2deg;
+  --ty: -20px;
+  justify-self: start;
+}
+/* Row 2 */
+.postcard-grid .pc-card:nth-child(3) {
+  --rot: 2deg;
+  --ty: -20px;
+  justify-self: end;
+}
+.postcard-grid .pc-card:nth-child(4) {
+  --rot: -2.5deg;
+  --ty: 20px;
+  justify-self: start;
+}
+/* Row 3 */
+.postcard-grid .pc-card:nth-child(5) {
+  --rot: -2deg;
+  --ty: 20px;
+  justify-self: end;
+}
+.postcard-grid .pc-card:nth-child(6) {
+  --rot: 3deg;
+  --ty: -20px;
+  justify-self: start;
+}
+
+/* ─── 3-D flip inner ──────────────────────────────────────────────── */
+.postcard-grid .pc-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  /* transition fires after 300 ms delay on enter, instant on leave */
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0s;
+}
+
+.postcard-grid .pc-card:hover .pc-inner,
+.postcard-grid .pc-card:focus-within .pc-inner,
+.postcard-grid .pc-card[aria-expanded="true"] .pc-inner {
+  transform: rotateY(180deg);
+  transition-delay: 300ms;
+}
+
+/* ─── Faces ───────────────────────────────────────────────────────── */
+.postcard-grid .pc-front,
+.postcard-grid .pc-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.postcard-grid .pc-back {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+}
+
+/* ─── Tablet  768 – 1279 px ───────────────────────────────────────── */
+@media (min-width: 768px) and (max-width: 1279px) {
+  .postcard-grid {
+    gap: 80px 60px;
+    padding: 0 40px;
+  }
+
+  .postcard-grid .pc-card {
+    width: min(362px, 42vw);
+  }
+
+  /* Subtler tilts on tablet */
+  .postcard-grid .pc-card:nth-child(1) {
+    --rot: -1.5deg;
+    --ty: 14px;
+  }
+  .postcard-grid .pc-card:nth-child(2) {
+    --rot: 1.5deg;
+    --ty: -14px;
+  }
+  .postcard-grid .pc-card:nth-child(3) {
+    --rot: 1.5deg;
+    --ty: -14px;
+  }
+  .postcard-grid .pc-card:nth-child(4) {
+    --rot: -1.5deg;
+    --ty: 14px;
+  }
+  .postcard-grid .pc-card:nth-child(5) {
+    --rot: -2deg;
+    --ty: 14px;
+  }
+  .postcard-grid .pc-card:nth-child(6) {
+    --rot: 2deg;
+    --ty: -14px;
+  }
+}
+
+/* Single column below 900 px (still within tablet range) */
+@media (min-width: 768px) and (max-width: 899px) {
+  .postcard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .postcard-grid .pc-card {
+    justify-self: center !important;
+  }
+}
+
+/* ─── Mobile  < 768 px ────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .postcard-grid {
+    grid-template-columns: 1fr;
+    gap: 60px 0;
+    padding: 0 20px;
+  }
+
+  .postcard-grid .pc-card {
+    width: 90vw;
+    /* No rotation on mobile */
+    --rot: 0deg !important;
+    --ty: 0px !important;
+    justify-self: center !important;
+    transform: none !important;
+  }
+
+  .postcard-grid .pc-card:hover,
+  .postcard-grid .pc-card:focus-within,
+  .postcard-grid .pc-card[aria-expanded="true"] {
+    transform: scale(1.02) !important;
+  }
+}
+
+/* ─── Accessibility: reduced motion ──────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .postcard-grid .pc-card,
+  .postcard-grid .pc-card:hover,
+  .postcard-grid .pc-card:focus-within,
+  .postcard-grid .pc-card[aria-expanded="true"] {
+    /* Kill all rotation and translateY */
+    --rot: 0deg !important;
+    --ty: 0px !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  /* Replace flip with a cross-fade */
+  .postcard-grid .pc-inner {
+    transform-style: flat !important;
+    transition: none !important;
+  }
+
+  .postcard-grid .pc-front,
+  .postcard-grid .pc-back {
+    transition: opacity 0.3s ease !important;
+    backface-visibility: visible !important;
+    -webkit-backface-visibility: visible !important;
+    transform: none !important;
+  }
+
+  .postcard-grid .pc-back {
+    opacity: 0;
+  }
+
+  .postcard-grid .pc-card:hover .pc-back,
+  .postcard-grid .pc-card:focus-within .pc-back,
+  .postcard-grid .pc-card[aria-expanded="true"] .pc-back {
+    opacity: 1;
+  }
+
+  .postcard-grid .pc-card:hover .pc-front,
+  .postcard-grid .pc-card:focus-within .pc-front,
+  .postcard-grid .pc-card[aria-expanded="true"] .pc-front {
+    opacity: 0;
+  }
 }

@@ -1,5 +1,5 @@
 .root {
-  --wall: #ece4d3;
+  --wall: #ede8e0;
   --ink: #2a2218;
   --ink-soft: #5a4e3c;
 
@@ -38,8 +38,7 @@
   opacity: 0;
   transition: opacity 220ms ease-out;
   background-color: var(--wall);
-  /* No texture/gradient — uniform color, identical to .root, so the wall
-     edge is invisible color-wise even if a shadow drifts past it. */
+  /* Uniform color matching .root so the wall edge is invisible. */
 }
 
 .wall.ready {
@@ -236,7 +235,7 @@
   text-transform: uppercase;
   color: var(--ink-soft);
   pointer-events: none;
-  background: rgba(236, 228, 211, 0.9);
+  background: rgba(237, 232, 224, 0.9);
   padding: 8px 16px 8px 12px;
   border-radius: 999px;
   display: inline-flex;
