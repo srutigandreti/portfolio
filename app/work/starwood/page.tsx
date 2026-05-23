@@ -581,6 +581,47 @@ export default function StarwoodCaseStudy() {
         >
           This lead me to explore two interaction models for testing.
         </p>
+
+        {/* ── Prototype A ──────────────────────────────────────────────── */}
+        <div className="mt-16">
+          <h2
+            className="font-display font-bold mb-3"
+            style={{
+              fontSize: "clamp(1rem, 1.5vw, 1.25rem)",
+              color: "#8b6b41",
+              letterSpacing: "-0.01em",
+            }}
+          >
+            Prototype A: Document-by-Document
+          </h2>
+          <p
+            className="font-sans font-normal leading-relaxed mb-1"
+            style={{
+              fontSize: "clamp(1rem, 1.625vw, 1.125rem)",
+              color: "#5e5e5e",
+            }}
+          >
+            Mirrors existing mental model, validating one document at a time
+          </p>
+          <p
+            className="font-sans font-normal leading-relaxed mb-6"
+            style={{
+              fontSize: "clamp(0.875rem, 1.325vw, 0.975rem)",
+              color: "#5e5e5e",
+            }}
+          >
+            <span style={{ fontWeight: 500 }}>Hypothesis:</span> Familiarity
+            reduces cognitive load and onboarding friction
+          </p>
+          <video
+            src="/videos/step-prototype.webm"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full rounded-md block"
+          />
+        </div>
       </div>
 
       <Footer />
