@@ -106,7 +106,10 @@ export default function MysaCaseStudy() {
           <section className="mb-0">
             <h2
               className="font-display font-medium mb-4"
-              style={{ fontSize: "1rem", color: "#8b6b41" }}
+              style={{
+                fontSize: "clamp(1rem, 1.5vw, 1.25rem)",
+                color: "#8b6b41",
+              }}
             >
               The Challenge
             </h2>
@@ -162,7 +165,10 @@ export default function MysaCaseStudy() {
           <section className="mt-10 mb-12">
             <h2
               className="font-display font-medium mb-4"
-              style={{ fontSize: "1rem", color: "#8b6b41" }}
+              style={{
+                fontSize: "clamp(1rem, 1.5vw, 1.25rem)",
+                color: "#8b6b41",
+              }}
             >
               What does Mysa mean?
             </h2>
@@ -193,7 +199,10 @@ export default function MysaCaseStudy() {
           <section className="mt-10 mb-12">
             <h2
               className="font-display font-medium mb-4"
-              style={{ fontSize: "1rem", color: "#8b6b41" }}
+              style={{
+                fontSize: "clamp(1rem, 1.5vw, 1.25rem)",
+                color: "#8b6b41",
+              }}
             >
               Owning Design
             </h2>
@@ -237,7 +246,10 @@ export default function MysaCaseStudy() {
           <section className="mb-0">
             <h2
               className="font-display font-medium mb-4"
-              style={{ fontSize: "1rem", color: "#8b6b41" }}
+              style={{
+                fontSize: "clamp(1rem, 1.5vw, 1.25rem)",
+                color: "#8b6b41",
+              }}
             >
               Brand Strategy
             </h2>
@@ -275,7 +287,10 @@ export default function MysaCaseStudy() {
           <section>
             <h2
               className="font-display font-medium mb-4"
-              style={{ fontSize: "1rem", color: "#8b6b41" }}
+              style={{
+                fontSize: "clamp(1rem, 1.5vw, 1.25rem)",
+                color: "#8b6b41",
+              }}
             >
               Visual System
             </h2>
@@ -369,7 +384,10 @@ export default function MysaCaseStudy() {
           <section>
             <h2
               className="font-display font-medium mb-6"
-              style={{ fontSize: "1rem", color: "#8b6b41" }}
+              style={{
+                fontSize: "clamp(1rem, 1.5vw, 1.25rem)",
+                color: "#8b6b41",
+              }}
             >
               Typography and Color
             </h2>
@@ -447,7 +465,10 @@ export default function MysaCaseStudy() {
         <div className="mt-14 pb-20">
           <h2
             className="font-display font-medium mb-10"
-            style={{ fontSize: "1rem", color: "#8b6b41" }}
+            style={{
+              fontSize: "clamp(1rem, 1.5vw, 1.25rem)",
+              color: "#8b6b41",
+            }}
           >
             Results?
           </h2>
@@ -527,7 +548,10 @@ export default function MysaCaseStudy() {
         <div className="mt-14 pb-24">
           <h2
             className="font-display font-medium mb-10"
-            style={{ fontSize: "1rem", color: "#8b6b41" }}
+            style={{
+              fontSize: "clamp(1rem, 1.5vw, 1.25rem)",
+              color: "#8b6b41",
+            }}
           >
             Reflections
           </h2>
