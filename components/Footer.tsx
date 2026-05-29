@@ -375,7 +375,9 @@ export default function Footer({ bg: _bg }: { bg?: string }) {
             Playground
           </TransitionLink>
           <TransitionLink
-            href="/resume"
+            href="https://drive.google.com/file/d/1e28HLgJMvz5ABegmsbyONla9EcvL7629/view?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
             className="font-sans font-normal text-[11px] tracking-[0.04em] uppercase text-ink hover:text-brown transition-colors"
           >
             Resume
@@ -387,7 +389,7 @@ export default function Footer({ bg: _bg }: { bg?: string }) {
             About
           </TransitionLink>
           <TransitionLink
-            href="/contact"
+            href="mailto:sruti.gandreti@gmail.com"
             className="font-sans font-normal text-[11px] tracking-[0.04em] uppercase text-ink hover:text-brown transition-colors"
           >
             Contact

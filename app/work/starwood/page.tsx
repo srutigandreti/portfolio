@@ -62,10 +62,11 @@ export default function StarwoodCaseStudy() {
               color: "#5e5e5e",
             }}
           >
-            Designing AI Workflow at{" "}
+            Bringing AI Into{" "}
             <strong className="font-bold" style={{ color: "#8b6b41" }}>
-              Starwood
-            </strong>
+              Starwood&apos;s
+            </strong>{" "}
+            Loan Boarding Workflow
           </h1>
 
           {/* Lede */}
@@ -111,10 +112,15 @@ export default function StarwoodCaseStudy() {
             ))}
           </div>
 
-          {/* ── Video placeholder ───────────────────────────────────────── */}
-          <div
-            className="w-full rounded-md mb-14"
-            style={{ aspectRatio: "16/9", backgroundColor: "#d0cdc5" }}
+          {/* ── Main Starwood video ─────────────────────────────────────── */}
+          <video
+            src="/videos/starwood-main.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            controls
+            className="w-full rounded-md mb-14 block"
           />
 
           {/* ── The Brief ───────────────────────────────────────────────── */}
@@ -635,6 +641,7 @@ export default function StarwoodCaseStudy() {
             loop
             muted
             playsInline
+            controls
             className="w-full rounded-md block"
           />
         </div>
@@ -679,6 +686,7 @@ export default function StarwoodCaseStudy() {
             loop
             muted
             playsInline
+            controls
             className="w-full rounded-md block"
           />
         </div>
