@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Phia — Reimagining Decision Confidence While Shopping",
+  title: "Phia",
   description:
     "Shoppers waste hours deciding whether to buy. This is the trust-based voting system I researched and designed in 24 hours that transforms solo shopping into collaborative decision-making, keeping every choice in the shopper's control while creating a new growth engine.",
 };

@@ -9,7 +9,7 @@ import StarwoodRadarChart from "@/components/StarwoodRadarChart";
 import StarwoodPMNotified from "@/components/StarwoodPMNotified";
 
 export const metadata: Metadata = {
-  title: "Starwood — AI-Assisted Loan Boarding",
+  title: "Starwood",
   description:
     "Accountants were spending 90 minutes per loan boarding deals by hand. This is the AI-assisted validation system that cut that time by 83–89%.",
 };

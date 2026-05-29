@@ -36,7 +36,7 @@ export default function AboutPage() {
         <div className="max-w-[1100px] mx-auto px-6 md:px-12 lg:px-16">
           <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-10 lg:gap-16 pb-20">
             {/* ── Badge (left) ───────────────────────────────────────── */}
-            <div className="lg:sticky lg:top-[64px] lg:self-start lg:h-[calc(100svh-64px)] lg:flex lg:items-end">
+            <div className="lg:sticky lg:top-[64px] lg:self-start lg:h-[calc(100svh-64px)] lg:flex lg:items-end lg:pb-12">
               <Image
                 src="/images/badge.png"
                 alt="Sruti Gandreti — Creative Technologist badge"
@@ -98,6 +98,36 @@ export default function AboutPage() {
                   Property Trust, designing internal tools and AI-powered
                   workflows in finance.
                 </p>
+              </div>
+
+              {/* Resume */}
+              <div className="mb-8">
+                <a
+                  href="https://drive.google.com/file/d/1e28HLgJMvz5ABegmsbyONla9EcvL7629/view?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Open resume in a new tab"
+                  className="group inline-flex items-baseline gap-1.5 font-display font-extralight uppercase tracking-widest hover:opacity-70 transition-opacity"
+                  style={{ fontSize: "0.775rem", color: "#8b6b41" }}
+                >
+                  <span>Resume</span>
+                  <svg
+                    aria-hidden
+                    width="9"
+                    height="9"
+                    viewBox="0 0 10 10"
+                    fill="none"
+                    className="translate-y-[1px] transition-transform group-hover:translate-x-[1.5px] group-hover:-translate-y-[0.5px]"
+                  >
+                    <path
+                      d="M2.5 7.5L7.5 2.5M7.5 2.5H3.5M7.5 2.5V6.5"
+                      stroke="currentColor"
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </a>
               </div>
 
               {/* Outside of design list */}

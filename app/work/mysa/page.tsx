@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import MysaPillars from "@/components/MysaPillars";
 
 export const metadata: Metadata = {
-  title: "Mysa — Building Visual Identity",
+  title: "Mysa",
   description:
     "Mysa reached 15,000 signups in its first month — driven mostly by social marketing. This is the brand I built from scratch that made it possible.",
 };
