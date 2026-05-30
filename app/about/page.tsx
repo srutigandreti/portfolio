@@ -52,18 +52,11 @@ export default function AboutPage() {
             {/* ── Content (right) ────────────────────────────────────── */}
             <div className="lg:pt-8">
               {/* Greeting */}
-              <h1
-                className="font-display font-light leading-tight mb-6"
-                style={{
-                  fontSize: "clamp(1.6rem, 3.5vw, 2.2rem)",
-                  color: "#5e5e5e",
-                }}
-              >
-                Hi, I&apos;m{" "}
-                <strong className="font-bold" style={{ color: "#8b6b41" }}>
-                  Sruti
-                </strong>{" "}
-                <span aria-hidden>👋</span>
+              <p className="font-script text-brown italic leading-none mb-2 text-[1.75rem] lg:text-[2rem]">
+                Okay, so who is
+              </p>
+              <h1 className="font-display font-normal text-brown text-[3rem] lg:text-[64px] leading-[0.92] mb-6">
+                Sruti? <span aria-hidden></span>
               </h1>
 
               {/* Lede */}
@@ -74,7 +67,8 @@ export default function AboutPage() {
                   color: "#5e5e5e",
                 }}
               >
-                Designer + engineer crafting experiences that matter.
+                A designer + engineer driven by curiosity, purpose, and a love
+                for creating.
               </p>
 
               {/* Body */}
@@ -101,7 +95,7 @@ export default function AboutPage() {
               </div>
 
               {/* Resume */}
-              <div className="mb-8">
+              <div className="mb-5">
                 <a
                   href="https://drive.google.com/file/d/1e28HLgJMvz5ABegmsbyONla9EcvL7629/view?usp=sharing"
                   target="_blank"
@@ -128,6 +122,37 @@ export default function AboutPage() {
                     />
                   </svg>
                 </a>
+              </div>
+
+              {/* Status pill — sage green "open to chats" indicator */}
+              <div className="mb-8">
+                <div
+                  className="inline-flex items-center gap-2.5 rounded-full pl-3.5 pr-4 py-[9px]"
+                  style={{ backgroundColor: "#dde7d2" }}
+                >
+                  <span
+                    aria-hidden
+                    className="block w-2 h-2 rounded-full"
+                    style={{
+                      backgroundColor: "#4d8f3a",
+                      boxShadow: "0 0 0 3px rgba(77,143,58,0.18)",
+                    }}
+                  />
+                  <span
+                    className="font-sans leading-none"
+                    style={{ fontSize: "0.95rem", color: "#3f5a30" }}
+                  >
+                    Building something exciting? Let&apos;s{" "}
+                    <a
+                      href="mailto:sruti.gandreti@gmail.com"
+                      aria-label="Email Sruti to connect"
+                      className="font-semibold transition-colors duration-150 hover:text-[#2563eb]!"
+                    >
+                      chat
+                    </a>
+                    !
+                  </span>
+                </div>
               </div>
 
               {/* Outside of design list */}

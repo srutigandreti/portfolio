@@ -3,6 +3,7 @@ import TransitionLink from "@/components/TransitionLink";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import EnvelopeHero from "@/components/EnvelopeHero";
+import MobileProjectCardList from "@/components/MobileProjectCard";
 
 const projects = [
   {
@@ -154,13 +155,10 @@ export default function HomePage() {
       {/* ─── Mobile + Tablet  < 1024 px ──────────────────────────── */}
       <main className="lg:hidden pt-[60px] pb-10">
         <div className="pt-10 pb-6 text-center px-5">
-          <p className="font-script text-brown italic leading-none text-[2.2rem] mb-2">
+          <p className="font-script text-brown italic leading-none mb-2 text-[1.75rem]">
             Hi, I&apos;m
           </p>
-          <h1
-            className="font-display font-normal text-brown leading-[0.9]"
-            style={{ fontSize: "3.8rem" }}
-          >
+          <h1 className="font-display font-normal text-brown text-[3rem] leading-[0.92]">
             Sruti
             <br />
             Gandreti
@@ -187,21 +185,9 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Stacked cards — centered, capped at 480 px on tablet */}
-        <div
-          id="work-mobile"
-          className="flex flex-col items-center gap-16 px-5 md:gap-24"
-          style={{ scrollMarginTop: "72px" }}
-        >
-          {projects.map((p, i) => (
-            <ProjectCard
-              key={p.slug}
-              p={p}
-              className="drop-shadow-lg w-full max-w-[480px]"
-              priority={i === 0}
-            />
-          ))}
-        </div>
+        {/* Stacked cards — centered, capped at 480 px on tablet.
+            Tap-to-flip then tap-to-navigate, since there's no hover on touch. */}
+        <MobileProjectCardList projects={projects} />
       </main>
 
       <Footer />

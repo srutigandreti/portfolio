@@ -111,6 +111,13 @@ a {
   transform: rotateY(180deg);
 }
 
+/* Touch flow: tap-to-flip on small screens — driven by the React state on
+   MobileProjectCard. Uses the same rotated end-state as hover so the back
+   image is rendered identically. */
+[data-flipped="true"] .flip-inner {
+  transform: rotateY(180deg);
+}
+
 .flip-front {
   display: block;
   backface-visibility: hidden;
