@@ -36,7 +36,7 @@ export default function AboutPage() {
         <div className="max-w-[1100px] mx-auto px-6 md:px-12 lg:px-16">
           <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-10 lg:gap-16 pb-20">
             {/* ── Badge (left) ───────────────────────────────────────── */}
-            <div className="lg:sticky lg:top-[64px] lg:self-start lg:h-[calc(100svh-64px)] lg:flex lg:items-end lg:pb-12">
+            <div className="lg:sticky lg:top-[64px] lg:self-start lg:h-[calc(100svh-64px)] lg:flex lg:items-start">
               <Image
                 src="/images/badge.png"
                 alt="Sruti Gandreti — Creative Technologist badge"
@@ -45,7 +45,7 @@ export default function AboutPage() {
                 sizes="(min-width: 1024px) 300px, 225px"
                 quality={95}
                 priority
-                className="block h-auto mx-auto lg:mx-0 w-[min(225px,calc((100svh-56px)*0.399))] md:w-[min(225px,calc((100svh-64px)*0.399))] lg:w-[min(300px,calc(100svh*0.399))]"
+                className="block h-auto mx-auto lg:mx-0 w-[min(225px,calc((100svh-56px)*0.399))] md:w-[min(225px,calc((100svh-64px)*0.399))] lg:w-[min(300px,calc((100svh-112px)*0.399))]"
               />
             </div>
 
