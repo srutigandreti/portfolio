@@ -24,14 +24,28 @@ export default function TransitionLink({
 
     e.preventDefault();
 
-    if (!("startViewTransition" in document)) {
+    const navigate = () => {
       router.push(url);
+      // Reset scroll to top on every navigation — without this, view transitions
+      // preserve the previous page's scroll position. Skip when jumping to an
+      // anchor (e.g. /#work) since Next handles that scroll itself.
+      if (!url.includes("#")) {
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: "instant" as ScrollBehavior,
+        });
+      }
+    };
+
+    if (!("startViewTransition" in document)) {
+      navigate();
       return;
     }
 
     (
       document as Document & { startViewTransition: (cb: () => void) => void }
-    ).startViewTransition(() => router.push(url));
+    ).startViewTransition(navigate);
   };
 
   return (

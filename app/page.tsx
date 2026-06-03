@@ -127,10 +127,12 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Cards — original absolute layout, intact at 1024 px+ */}
+        {/* Cards — original absolute layout, intact at 1024 px+.
+            max-w caps the spread at ~16" laptop width so cards don't drift
+            toward the edges on ultra-wide monitors. */}
         <section
           id="work"
-          className="relative pb-20 min-h-[1130px] lg:min-h-[1540px]"
+          className="relative mx-auto pb-20 min-h-[1130px] lg:min-h-[1540px] max-w-[1728px]"
           style={{ scrollMarginTop: "72px" }}
         >
           <ProjectCard

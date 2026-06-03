@@ -106,90 +106,18 @@ export default function PhiaCaseStudy() {
           </div>
 
           {/* ── Under Construction ─────────────────────────────────────── */}
-          <div className="phia-glow-wrap relative">
-            <Image
-              src="/images/phia-under-construction.png"
-              alt="Under construction"
-              width={2000}
-              height={1000}
-              className="w-full h-auto block relative z-10"
-              unoptimized
-            />
-          </div>
+          <Image
+            src="/images/phia-under-construction.png"
+            alt="Under construction"
+            width={2000}
+            height={1000}
+            className="w-full h-auto block"
+            unoptimized
+          />
         </main>
       </div>
 
       <Footer />
-
-      <style>{`
-        @property --phia-glow-angle {
-          syntax: '<angle>';
-          initial-value: 0deg;
-          inherits: false;
-        }
-
-        .phia-glow-wrap::before,
-        .phia-glow-wrap::after {
-          content: '';
-          position: absolute;
-          top: -2px;
-          left: calc(0.422% - 2px);
-          right: calc(0.422% - 2px);
-          bottom: calc(2.95% - 2px);
-          border-radius: 2.1% / 7.3%;
-          padding: 2px;
-          pointer-events: none;
-          background: conic-gradient(
-            from var(--phia-glow-angle),
-            transparent 0deg,
-            transparent 140deg,
-            rgba(212, 165, 96, 0.35) 165deg,
-            rgba(244, 208, 130, 0.95) 180deg,
-            rgba(255, 235, 175, 1) 185deg,
-            rgba(244, 208, 130, 0.95) 195deg,
-            rgba(212, 165, 96, 0.35) 215deg,
-            transparent 240deg,
-            transparent 360deg
-          );
-          -webkit-mask:
-            linear-gradient(#000 0 0) content-box,
-            linear-gradient(#000 0 0);
-          -webkit-mask-composite: xor;
-          mask:
-            linear-gradient(#000 0 0) content-box,
-            linear-gradient(#000 0 0);
-          mask-composite: exclude;
-          animation: phia-glow-trace 4s linear infinite;
-        }
-
-        .phia-glow-wrap::before {
-          filter: blur(2px);
-          z-index: 11;
-        }
-
-        .phia-glow-wrap::after {
-          top: -6px;
-          left: calc(0.422% - 6px);
-          right: calc(0.422% - 6px);
-          bottom: calc(2.95% - 6px);
-          padding: 6px;
-          border-radius: 2.4% / 8.5%;
-          filter: blur(10px);
-          opacity: 0.75;
-          z-index: 9;
-        }
-
-        @keyframes phia-glow-trace {
-          to { --phia-glow-angle: 360deg; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .phia-glow-wrap::before,
-          .phia-glow-wrap::after {
-            animation: none;
-          }
-        }
-      `}</style>
     </div>
   );
 }

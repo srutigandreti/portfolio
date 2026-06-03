@@ -3,7 +3,7 @@ import TransitionLink from "@/components/TransitionLink";
 export default function Header({ bg = "bg-beige/90" }: { bg?: string }) {
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 md:px-8 md:py-4 backdrop-blur-sm ${bg}`}
+      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-[56px] md:h-[64px] px-4 md:px-8 backdrop-blur-sm ${bg}`}
     >
       <TransitionLink
         href="/"
