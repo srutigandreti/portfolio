@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Unbounded, Poppins, Grape_Nuts } from "next/font/google";
 import localFont from "next/font/local";
 import "@/styles/globals.css";
+import ScrollToTopOnRoute from "@/components/ScrollToTopOnRoute";
 
 const unbounded = Unbounded({
   subsets: ["latin"],
@@ -86,7 +87,10 @@ export default function RootLayout({
           }
         `}</style>
       </head>
-      <body>{children}</body>
+      <body>
+        <ScrollToTopOnRoute />
+        {children}
+      </body>
     </html>
   );
 }
