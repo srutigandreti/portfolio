@@ -97,7 +97,7 @@ export default function AboutPage() {
               {/* Resume */}
               <div className="mb-5">
                 <a
-                  href="https://drive.google.com/file/d/1e28HLgJMvz5ABegmsbyONla9EcvL7629/view?usp=sharing"
+                  href="https://drive.google.com/file/d/1Lued8POPuSK2Oi7GD0AbduP6jypLsxh_/view?usp=sharing"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Open resume in a new tab"
