@@ -28,7 +28,10 @@ export default function StarwoodPasswordGate({
 
   return (
     <div className="max-w-[1000px] mx-auto px-6 md:px-[60px] py-6">
-      <div className="relative w-full" style={{ aspectRatio: "2814 / 1209" }}>
+      <div
+        className="relative w-full"
+        style={{ aspectRatio: "2814 / 1209", containerType: "inline-size" }}
+      >
         <Image
           src="/images/password-protected-banner.png"
           alt="This case study is password protected"
@@ -43,9 +46,9 @@ export default function StarwoodPasswordGate({
         <p
           className="absolute left-[8%] right-[8%] font-display text-white"
           style={{
-            bottom: "40%",
+            bottom: "42%",
             fontWeight: 300,
-            fontSize: "clamp(0.96rem, 1.68vw, 1.14rem)",
+            fontSize: "clamp(0.5rem, 2.2cqw, 1rem)",
           }}
         >
           Want to see it?{" "}
@@ -81,11 +84,11 @@ export default function StarwoodPasswordGate({
               aria-label="Enter password to view case study"
               autoComplete="off"
               spellCheck={false}
-              className="w-full bg-transparent text-white outline-none border-0 pl-5 pr-12 py-3 sm:py-3.5 md:py-4 placeholder:text-white/90"
+              className="w-full bg-transparent text-white outline-none border-0 pl-3 pr-10 sm:pl-4 sm:pr-11 md:pl-5 md:pr-12 py-[clamp(0.15rem,1.3cqw,1rem)] placeholder:text-white/90"
               style={{
                 fontFamily: '"PPNeueMontreal", sans-serif',
                 fontWeight: 400,
-                fontSize: "clamp(1.05rem, 1.8vw, 1.25rem)",
+                fontSize: "clamp(0.85rem, 2.8vw, 1.25rem)",
                 letterSpacing: "0.01em",
               }}
             />

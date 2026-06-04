@@ -75,9 +75,8 @@ export default function MysaCaseStudy() {
 
           {/* Meta table */}
           <div
-            className="grid gap-y-3 mb-14 border-t border-b py-8"
+            className="grid grid-cols-2 md:grid-cols-4 gap-y-3 mb-14 border-t border-b py-8"
             style={{
-              gridTemplateColumns: "repeat(4, 1fr)",
               borderColor: "rgba(94,94,94,0.15)",
             }}
           >
@@ -434,10 +433,11 @@ export default function MysaCaseStudy() {
               />
             </div>
 
-            {/* Business card + ad — flex-grow proportional to native widths
-                so both images share the same rendered height */}
-            <div className="flex gap-4 mt-4">
-              <div style={{ flex: "9 1 0%" }}>
+            {/* Business card + ad — stacked full-width on mobile;
+                flex-grow proportional to native widths at md+ so both
+                images share the same rendered height side-by-side. */}
+            <div className="flex flex-col md:flex-row gap-4 mt-4">
+              <div className="w-full md:flex-[9_1_0%]">
                 <Image
                   src="/images/mysa-business-card.png"
                   alt="Mysa business card"
@@ -447,7 +447,7 @@ export default function MysaCaseStudy() {
                   unoptimized
                 />
               </div>
-              <div style={{ flex: "5 1 0%" }}>
+              <div className="w-full md:flex-[5_1_0%]">
                 <Image
                   src="/images/mysa-ad.png"
                   alt="Mysa ad"
@@ -474,12 +474,12 @@ export default function MysaCaseStudy() {
           </h2>
 
           {/* Stats */}
-          <div className="flex gap-12 md:gap-20 mb-14">
+          <div className="flex justify-between md:justify-start gap-4 md:gap-20 mb-14">
             <div>
               <p
                 className="font-sans font-bold leading-none"
                 style={{
-                  fontSize: "clamp(2.6rem, 7.5vw, 5rem)",
+                  fontSize: "clamp(3.5rem, 16vw, 5rem)",
                   letterSpacing: "-0.025em",
                   color: "#1a1a1a",
                 }}
@@ -489,7 +489,7 @@ export default function MysaCaseStudy() {
               <div
                 className="mt-2"
                 style={{
-                  fontSize: "clamp(0.525rem, 1.5vw, 1rem)",
+                  fontSize: "clamp(0.75rem, 2.5vw, 1rem)",
                   color: "#5e5e5e",
                 }}
               >
@@ -502,7 +502,7 @@ export default function MysaCaseStudy() {
               <p
                 className="font-sans font-bold leading-none"
                 style={{
-                  fontSize: "clamp(2.6rem, 7.5vw, 5rem)",
+                  fontSize: "clamp(3.5rem, 16vw, 5rem)",
                   letterSpacing: "-0.025em",
                   color: "#1a1a1a",
                 }}
@@ -512,7 +512,7 @@ export default function MysaCaseStudy() {
               <div
                 className="mt-2"
                 style={{
-                  fontSize: "clamp(0.525rem, 1.5vw, 1rem)",
+                  fontSize: "clamp(0.75rem, 2.5vw, 1rem)",
                   color: "#5e5e5e",
                 }}
               >

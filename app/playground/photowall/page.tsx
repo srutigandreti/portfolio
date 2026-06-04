@@ -11,7 +11,7 @@ export default function PhotoWallPage() {
   return (
     <>
       <Header />
-      <main className="pt-[60px]">
+      <main className="pt-[56px] md:pt-[64px]">
         <Playground />
       </main>
     </>

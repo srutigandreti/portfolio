@@ -6,17 +6,20 @@ import { useRouter } from "next/navigation";
 
 // Subscribe-once helpers for useSyncExternalStore — defined at module scope so
 // React sees stable references and doesn't tear down the subscription on every
-// render. Mirrors the lg breakpoint (1024px).
-const MOBILE_MQ = "(max-width: 1023px)";
+// render. We key off `hover: none` so every touch device (phone, tablet
+// including iPad in *landscape*) gets the always-visible tooltips. A pure
+// viewport-width breakpoint missed iPad landscape (1024px wide), leaving
+// tablet users unable to discover the hotspots.
+const TOUCH_MQ = "(hover: none)";
 
 function subscribeMobileMQ(cb: () => void) {
-  const mq = window.matchMedia(MOBILE_MQ);
+  const mq = window.matchMedia(TOUCH_MQ);
   mq.addEventListener("change", cb);
   return () => mq.removeEventListener("change", cb);
 }
 
 function getMobileMQSnapshot() {
-  return window.matchMedia(MOBILE_MQ).matches;
+  return window.matchMedia(TOUCH_MQ).matches;
 }
 
 // SSR has no viewport — render as desktop and let the client store resolve.

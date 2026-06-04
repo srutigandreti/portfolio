@@ -78,9 +78,8 @@ export default function PhiaCaseStudy() {
 
           {/* Meta table */}
           <div
-            className="grid gap-y-3 mb-14 border-t border-b py-8"
+            className="grid grid-cols-2 md:grid-cols-4 gap-y-3 mb-14 border-t border-b py-8"
             style={{
-              gridTemplateColumns: "repeat(4, 1fr)",
               borderColor: "rgba(94,94,94,0.15)",
             }}
           >

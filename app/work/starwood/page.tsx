@@ -72,9 +72,8 @@ export default function StarwoodCaseStudy() {
 
           {/* Meta table */}
           <div
-            className="grid gap-y-3 mb-14 border-t border-b py-8"
+            className="grid grid-cols-2 md:grid-cols-4 gap-y-3 mb-14 border-t border-b py-8"
             style={{
-              gridTemplateColumns: "repeat(4, 1fr)",
               borderColor: "rgba(94,94,94,0.15)",
             }}
           >
@@ -926,7 +925,7 @@ export default function StarwoodCaseStudy() {
             {/* Checklist */}
             <ul className="mb-8" style={{ listStyle: "none", padding: 0 }}>
               {[
-                "8-10 seeded errors per each deal",
+                "8-10 seeded errors spotted per each deal",
                 "All 75 errors detected by accountants",
                 "0 false acceptances",
               ].map((item, i) => (

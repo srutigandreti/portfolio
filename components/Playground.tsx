@@ -7,7 +7,6 @@ import {
   useRef,
   useState,
   type CSSProperties,
-  type PointerEvent as ReactPointerEvent,
 } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./Playground.module.css";
@@ -261,25 +260,33 @@ type DragState = {
 const CLICK_THRESHOLD_PX = 5;
 const EDGE_THRESHOLD = 90;
 const MAX_SCROLL_SPEED = 18;
+// Touch only: ms a finger must rest on a photo before drag engages.
+// Without the hold, a finger movement on a photo is treated as a swipe (pan).
+const HOLD_MS = 220;
 
 // Clamp a photo's offset so the resulting wall-space position keeps the
 // photo (including the corners produced by its tilt) fully inside the wall.
+// `scale` accounts for the responsive sizing — photos render at a smaller
+// size on mobile and should be allowed to travel further before hitting the
+// wall edge.
 function clampOffset(
   photo: Photo,
   raw: Offset,
   wallEl: HTMLElement | null,
+  scale = 1,
 ): Offset {
   const wallW = wallEl?.offsetWidth ?? 2800;
   const wallH = wallEl?.offsetHeight ?? 2000;
-  const photoH = photo.width * photo.aspect;
+  const photoW = photo.width * scale;
+  const photoH = photoW * photo.aspect;
   // A rotated rectangle's bounding box is larger than the unrotated one.
   // Reserve enough margin so the rotated corners don't poke past the wall.
   const tiltRad = (Math.abs(photo.tilt) * Math.PI) / 180;
   const tiltBuffer = Math.ceil(
-    (Math.max(photo.width, photoH) / 2) * Math.sin(tiltRad),
+    (Math.max(photoW, photoH) / 2) * Math.sin(tiltRad),
   );
   const minX = -photo.x + tiltBuffer;
-  const maxX = wallW - photo.x - photo.width - tiltBuffer;
+  const maxX = wallW - photo.x - photoW - tiltBuffer;
   const minY = -photo.y + tiltBuffer;
   const maxY = wallH - photo.y - photoH - tiltBuffer;
   return {
@@ -296,16 +303,50 @@ export default function Playground() {
   const [zOrder, setZOrder] = useState<string[]>(() => PHOTOS.map((p) => p.id));
   const [carriedId, setCarriedId] = useState<string | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
+  // Touch-only: which photo has been tapped (caption visible). Cleared when
+  // a drag starts or the user pans the wall.
+  const [tappedId, setTappedId] = useState<string | null>(null);
+  // Desktop carry-mode: after dropping a photo, the cursor is over the photo
+  // and :hover would slide the caption out. Suppress the caption for this
+  // photo briefly so the drop feels clean.
+  const [justDroppedId, setJustDroppedId] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
+  // Touch devices can't track an "in-flight" photo (no hover after a tap),
+  // so carry mode is disabled there. Photos shrink on small viewports too.
+  const [isTouch, setIsTouch] = useState(false);
+  const [photoScale, setPhotoScale] = useState(1);
+
+  useEffect(() => {
+    const update = () => {
+      setIsTouch(window.matchMedia("(hover: none)").matches);
+      setPhotoScale(window.innerWidth < 560 ? 0.6 : 1);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+  // Mirror of photoScale that's always current — used inside callbacks and
+  // useEffect closures that can't depend on photoScale without churn.
+  const photoScaleRef = useRef(1);
+  useEffect(() => {
+    photoScaleRef.current = photoScale;
+  }, [photoScale]);
   const carryRef = useRef<CarryState | null>(null);
-  const dragRef = useRef<DragState | null>(null);
+  const dragRef = useRef<(DragState & { snapped?: boolean }) | null>(null);
+  // Touch-only "pending" gesture — finger is down on a photo, but we don't
+  // yet know if the user wants to drag it (long-press) or pan the wall
+  // (swipe). HOLD_MS of stillness promotes to drag; movement before that
+  // switches to pan.
+  const holdRef = useRef<{
+    pointerId: number;
+    photoId: string;
+    startClientX: number;
+    startClientY: number;
+    timer: number;
+  } | null>(null);
   // Latest cursor viewport position, sampled in the move handlers. Read by
   // the edge-scroll rAF loop so panning continues even when the cursor stops.
   const cursorRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  // After a drag with movement, suppress the synthetic click that browsers
-  // fire on pointerup — otherwise it would immediately enter carry mode.
-  const suppressNextClickRef = useRef(false);
-  const suppressClearTidRef = useRef<number | null>(null);
 
   const bringToFront = useCallback((id: string) => {
     setZOrder((order) => {
@@ -332,24 +373,34 @@ export default function Playground() {
       photo,
       { x: carry.originX + dx, y: carry.originY + dy },
       wallRef.current,
+      photoScaleRef.current,
     );
     setOffsets((prev) => ({ ...prev, [carry.id]: next }));
   }, []);
 
-  // ─── Click handler: pickup / drop (carry mode) ───
+  // ─── Click handler: tap to pickup, tap to drop (carry mode).
+  // Mouse only — touch devices use direct drag instead (a finger can't hover,
+  // so the "pickup then move freely" model has no equivalent on touch).
   const onPhotoClick = (e: React.MouseEvent<HTMLDivElement>, photo: Photo) => {
-    if (suppressNextClickRef.current) {
-      suppressNextClickRef.current = false;
-      e.stopPropagation();
-      return;
-    }
     e.stopPropagation();
+    // Touch: tap handled in onRootPointerUp (which fires before this synthetic
+    // click). Returning early prevents a double-toggle of the caption.
+    if (isTouch) return;
+    // Drop if already carrying
     if (carryRef.current) {
       applyCarryDelta(e.clientX, e.clientY);
+      const droppedId = carryRef.current.id;
       carryRef.current = null;
       setCarriedId(null);
+      // Suppress the caption that would otherwise slide out via :hover
+      // because the cursor lands on the just-dropped photo.
+      setJustDroppedId(droppedId);
+      window.setTimeout(() => {
+        setJustDroppedId((prev) => (prev === droppedId ? null : prev));
+      }, 1200);
       return;
     }
+    // Pickup
     const existing = offsets[photo.id] ?? { x: 0, y: 0 };
     const el = rootRef.current;
     const sl = el?.scrollLeft ?? 0;
@@ -366,100 +417,224 @@ export default function Playground() {
     bringToFront(photo.id);
   };
 
-  // ─── Pointer handlers: hold-and-drag ───
-  const onPointerDown = (
-    e: ReactPointerEvent<HTMLDivElement>,
-    photo: Photo,
-  ) => {
-    // Always clear any stale suppress flag from a previous gesture. If the
-    // last drag ended over empty wall, no photo click fired to consume it.
-    suppressNextClickRef.current = false;
-    if (suppressClearTidRef.current != null) {
-      window.clearTimeout(suppressClearTidRef.current);
-      suppressClearTidRef.current = null;
-    }
-    // Don't engage drag while a photo is already in carry mode — let the
-    // click handler resolve the drop.
+  // ─── Pan-drag on empty wall area ───
+  // Press anywhere that's NOT a photo and drag — the wall scrolls. With
+  // overflow:hidden on the root and touch-action:none, native scroll is off,
+  // so this is the only way to pan around the wall.
+  const panRef = useRef<{
+    pointerId: number;
+    startClientX: number;
+    startClientY: number;
+    startScrollLeft: number;
+    startScrollTop: number;
+  } | null>(null);
+
+  const onRootPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    // Already carrying a photo (desktop)? Skip everything so the next click
+    // drops the photo cleanly.
     if (carryRef.current) return;
+    const el = rootRef.current;
+    if (!el) return;
+    const target = e.target as HTMLElement;
+    const photoEl = target.closest(`[data-photo-id]`) as HTMLElement | null;
+    const photoId = photoEl?.dataset.photoId ?? null;
+
+    // Tap anywhere clears any touch-tapped caption.
+    setTappedId(null);
+
+    if (photoId && isTouch) {
+      // Pending: wait HOLD_MS for the finger to settle. If it does, engage
+      // drag mode; if the finger moves first, switch to pan; if released
+      // first, treat as a tap (caption toggle).
+      try {
+        el.setPointerCapture(e.pointerId);
+      } catch {
+        /* noop */
+      }
+      const timer = window.setTimeout(() => {
+        const hold = holdRef.current;
+        if (!hold) return;
+        const photo = PHOTOS.find((p) => p.id === hold.photoId);
+        if (!photo) return;
+        const existing = offsets[photo.id] ?? { x: 0, y: 0 };
+        const elNow = rootRef.current;
+        const sl = elNow?.scrollLeft ?? 0;
+        const st = elNow?.scrollTop ?? 0;
+        dragRef.current = {
+          id: photo.id,
+          pointerId: hold.pointerId,
+          startClientX: hold.startClientX,
+          startClientY: hold.startClientY,
+          startWallX: hold.startClientX + sl,
+          startWallY: hold.startClientY + st,
+          originX: existing.x,
+          originY: existing.y,
+          moved: true,
+          snapped: false,
+        };
+        cursorRef.current = {
+          x: hold.startClientX,
+          y: hold.startClientY,
+        };
+        setDraggingId(photo.id);
+        bringToFront(photo.id);
+        holdRef.current = null;
+      }, HOLD_MS);
+
+      holdRef.current = {
+        pointerId: e.pointerId,
+        photoId,
+        startClientX: e.clientX,
+        startClientY: e.clientY,
+        timer,
+      };
+      return;
+    }
+
+    if (photoId && !isTouch) {
+      // Desktop touching down on a photo — carry-mode handles it via onClick.
+      return;
+    }
+
+    // Empty wall: pan immediately.
     try {
-      e.currentTarget.setPointerCapture(e.pointerId);
+      el.setPointerCapture(e.pointerId);
     } catch {
       /* noop */
     }
-    const existing = offsets[photo.id] ?? { x: 0, y: 0 };
-    const el = rootRef.current;
-    const sl = el?.scrollLeft ?? 0;
-    const st = el?.scrollTop ?? 0;
-    dragRef.current = {
-      id: photo.id,
+    panRef.current = {
       pointerId: e.pointerId,
-      startWallX: e.clientX + sl,
-      startWallY: e.clientY + st,
       startClientX: e.clientX,
       startClientY: e.clientY,
-      originX: existing.x,
-      originY: existing.y,
-      moved: false,
+      startScrollLeft: el.scrollLeft,
+      startScrollTop: el.scrollTop,
     };
-    cursorRef.current = { x: e.clientX, y: e.clientY };
   };
 
-  const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
-    const drag = dragRef.current;
-    if (!drag || drag.pointerId !== e.pointerId) return;
-    cursorRef.current = { x: e.clientX, y: e.clientY };
+  const onRootPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     const el = rootRef.current;
-    const sl = el?.scrollLeft ?? 0;
-    const st = el?.scrollTop ?? 0;
-    // Wall-space delta (driven by both cursor and scroll changes).
-    const dx = e.clientX + sl - drag.startWallX;
-    const dy = e.clientY + st - drag.startWallY;
-    // Viewport-space delta is the right metric for the click-vs-drag check —
-    // scrolling alone shouldn't promote a tap into a drag.
-    const vdx = e.clientX - drag.startClientX;
-    const vdy = e.clientY - drag.startClientY;
-    if (!drag.moved && Math.hypot(vdx, vdy) > CLICK_THRESHOLD_PX) {
-      drag.moved = true;
-      setDraggingId(drag.id);
-      bringToFront(drag.id);
+    if (!el) return;
+
+    // Pending hold — if finger moves before HOLD_MS elapses, cancel the
+    // drag and convert to a pan (swipe gesture).
+    const hold = holdRef.current;
+    if (hold && hold.pointerId === e.pointerId) {
+      const dx = e.clientX - hold.startClientX;
+      const dy = e.clientY - hold.startClientY;
+      if (Math.hypot(dx, dy) > CLICK_THRESHOLD_PX) {
+        window.clearTimeout(hold.timer);
+        holdRef.current = null;
+        panRef.current = {
+          pointerId: e.pointerId,
+          startClientX: hold.startClientX,
+          startClientY: hold.startClientY,
+          startScrollLeft: el.scrollLeft,
+          startScrollTop: el.scrollTop,
+        };
+        el.scrollLeft = panRef.current.startScrollLeft - dx;
+        el.scrollTop = panRef.current.startScrollTop - dy;
+      }
+      return;
     }
-    if (drag.moved) {
-      const photo = PHOTOS.find((p) => p.id === drag.id)!;
+
+    // Drag in progress (touch-only, set by hold-timer).
+    const drag = dragRef.current;
+    if (drag && drag.pointerId === e.pointerId) {
+      cursorRef.current = { x: e.clientX, y: e.clientY };
+      const sl = el.scrollLeft;
+      const st = el.scrollTop;
+      const photo = PHOTOS.find((p) => p.id === drag.id);
+      if (!photo) return;
+      // First move after activation: snap photo center to finger so it's
+      // fully "in focus" — same UX as before, just relocated.
+      if (!drag.snapped) {
+        const scale = photoScaleRef.current;
+        const photoW = photo.width * scale;
+        const photoH = photoW * photo.aspect;
+        const snapped = clampOffset(
+          photo,
+          {
+            x: e.clientX + sl - photo.x - photoW / 2,
+            y: e.clientY + st - photo.y - photoH / 2,
+          },
+          wallRef.current,
+          scale,
+        );
+        setOffsets((prev) => ({ ...prev, [drag.id]: snapped }));
+        drag.originX = snapped.x;
+        drag.originY = snapped.y;
+        drag.startWallX = e.clientX + sl;
+        drag.startWallY = e.clientY + st;
+        drag.snapped = true;
+        return;
+      }
+      const dx = e.clientX + sl - drag.startWallX;
+      const dy = e.clientY + st - drag.startWallY;
       const next = clampOffset(
         photo,
         { x: drag.originX + dx, y: drag.originY + dy },
         wallRef.current,
+        photoScaleRef.current,
       );
       setOffsets((prev) => ({ ...prev, [drag.id]: next }));
+      return;
+    }
+
+    // Pan in progress.
+    const pan = panRef.current;
+    if (pan && pan.pointerId === e.pointerId) {
+      const dx = e.clientX - pan.startClientX;
+      const dy = e.clientY - pan.startClientY;
+      el.scrollLeft = pan.startScrollLeft - dx;
+      el.scrollTop = pan.startScrollTop - dy;
     }
   };
 
-  const endDrag = (e: ReactPointerEvent<HTMLDivElement>) => {
-    const drag = dragRef.current;
-    if (!drag || drag.pointerId !== e.pointerId) return;
-    try {
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    } catch {
-      /* noop */
-    }
-    if (drag.moved) {
-      // Photo stays exactly where it was last positioned — no inertia, no slide.
-      setDraggingId(null);
-      suppressNextClickRef.current = true;
-      // Safety net: if the synthetic click never fires on a photo (e.g. drag
-      // ended over empty wall), make sure the flag doesn't stay stale and
-      // eat the next legitimate tap.
-      if (suppressClearTidRef.current != null) {
-        window.clearTimeout(suppressClearTidRef.current);
+  const onRootPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = rootRef.current;
+
+    // Pending hold released without movement = tap → toggle caption.
+    const hold = holdRef.current;
+    if (hold && hold.pointerId === e.pointerId) {
+      window.clearTimeout(hold.timer);
+      try {
+        el?.releasePointerCapture(e.pointerId);
+      } catch {
+        /* noop */
       }
-      suppressClearTidRef.current = window.setTimeout(() => {
-        suppressNextClickRef.current = false;
-        suppressClearTidRef.current = null;
-      }, 120);
+      const tappedPhotoId = hold.photoId;
+      holdRef.current = null;
+      setTappedId((prev) => (prev === tappedPhotoId ? null : tappedPhotoId));
+      bringToFront(tappedPhotoId);
+      return;
     }
-    dragRef.current = null;
+
+    // Drag ends: photo stays where it is.
+    const drag = dragRef.current;
+    if (drag && drag.pointerId === e.pointerId) {
+      try {
+        el?.releasePointerCapture(e.pointerId);
+      } catch {
+        /* noop */
+      }
+      dragRef.current = null;
+      setDraggingId(null);
+      return;
+    }
+
+    // Pan ends.
+    const pan = panRef.current;
+    if (pan && pan.pointerId === e.pointerId) {
+      try {
+        el?.releasePointerCapture(e.pointerId);
+      } catch {
+        /* noop */
+      }
+      panRef.current = null;
+    }
   };
 
+  // ─── Pointer handlers: hold-and-drag ───
   // ─── Edge-scroll: while a photo is active (dragging or carrying) and the
   // cursor is near a viewport edge, pan the wall in that direction. Bounded
   // automatically by overflow:auto so the user can never scroll past the wall.
@@ -467,6 +642,13 @@ export default function Playground() {
     if (!draggingId && !carriedId) return;
     let rafId = 0;
     const tick = () => {
+      // Bail out the moment the drag/carry refs are cleared. State updates
+      // (setDraggingId(null) etc.) don't reach the dep array until the next
+      // render, so without this guard the rAF loop keeps panning the wall
+      // for several frames after pointerup — feeling like the pic "keeps
+      // moving" after the user lets go (especially on touch, where the
+      // finger releases right at a viewport edge).
+      if (!dragRef.current && !carryRef.current) return;
       const el = rootRef.current;
       if (!el) {
         rafId = requestAnimationFrame(tick);
@@ -521,6 +703,7 @@ export default function Playground() {
               photo,
               { x: drag.originX + dx, y: drag.originY + dy },
               wallRef.current,
+              photoScaleRef.current,
             );
             setOffsets((prev) => ({ ...prev, [drag.id]: next }));
           } else if (carryRef.current) {
@@ -532,6 +715,7 @@ export default function Playground() {
               photo,
               { x: carry.originX + dx, y: carry.originY + dy },
               wallRef.current,
+              photoScaleRef.current,
             );
             setOffsets((prev) => ({ ...prev, [carry.id]: next }));
           }
@@ -597,7 +781,14 @@ export default function Playground() {
   }, []);
 
   return (
-    <div ref={rootRef} className={styles.root}>
+    <div
+      ref={rootRef}
+      className={styles.root}
+      onPointerDown={onRootPointerDown}
+      onPointerMove={onRootPointerMove}
+      onPointerUp={onRootPointerUp}
+      onPointerCancel={onRootPointerUp}
+    >
       <div
         ref={wallRef}
         className={`${styles.wall}${ready ? " " + styles.ready : ""}`}
@@ -608,24 +799,23 @@ export default function Playground() {
           const isActive = carriedId === id || draggingId === id;
           const style: CSSProperties = {
             transform: `translate3d(${photo.x + offset.x}px, ${photo.y + offset.y}px, 0) rotate(${photo.tilt}deg)`,
-            width: photo.width,
-            height: photo.width * photo.aspect,
+            width: photo.width * photoScale,
+            height: photo.width * photo.aspect * photoScale,
             zIndex: isActive ? 200 : idx + 1,
             // No transition while active — the photo tracks the cursor exactly.
             transition: isActive ? "none" : undefined,
           };
           const classes = [styles.photo];
           if (isActive) classes.push(styles.dragging);
+          if (tappedId === id) classes.push(styles.tapped);
+          if (justDroppedId === id) classes.push(styles.justDropped);
           return (
             <div
               key={id}
+              data-photo-id={id}
               className={classes.join(" ")}
               style={style}
               onClick={(e) => onPhotoClick(e, photo)}
-              onPointerDown={(e) => onPointerDown(e, photo)}
-              onPointerMove={onPointerMove}
-              onPointerUp={endDrag}
-              onPointerCancel={endDrag}
               role="button"
               aria-label={`${photo.location} ${photo.year}`}
             >
@@ -645,24 +835,31 @@ export default function Playground() {
         })}
       </div>
       <div className={styles.hint}>
-        Tap / drag to move pics ·{" "}
-        <kbd
-          style={{
-            display: "inline-block",
-            fontFamily: "inherit",
-            fontSize: "0.6rem",
-            lineHeight: 1,
-            padding: "2px 5px",
-            border: "1px solid currentColor",
-            borderRadius: "4px",
-            boxShadow: "0 2px 0 currentColor",
-            marginRight: "2px",
-            verticalAlign: "middle",
-          }}
-        >
-          ESC
-        </kbd>{" "}
-        to exit
+        {isTouch
+          ? "Hold + Drag photos to move them • Swipe to pan"
+          : "Click photos to move them • Drag to pan"}
+        {!isTouch && (
+          <>
+            {" • "}
+            <kbd
+              style={{
+                display: "inline-block",
+                fontFamily: "inherit",
+                fontSize: "0.6rem",
+                lineHeight: 1,
+                padding: "2px 5px",
+                border: "1px solid currentColor",
+                borderRadius: "4px",
+                boxShadow: "0 2px 0 currentColor",
+                marginRight: "2px",
+                verticalAlign: "middle",
+              }}
+            >
+              ESC
+            </kbd>{" "}
+            to exit
+          </>
+        )}
       </div>
     </div>
   );

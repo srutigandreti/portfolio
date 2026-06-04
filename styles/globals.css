@@ -34,6 +34,10 @@ body {
   font-weight: 400;
   font-synthesis: none;
   color: #5e5e5e;
+  /* Stop any rogue wide element from making the page wider than the
+     viewport — mobile browsers auto-zoom out when that happens, which
+     reads as the whole site being "zoomed in" on phones. */
+  overflow-x: hidden;
 }
 
 img,
