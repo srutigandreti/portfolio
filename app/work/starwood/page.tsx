@@ -8,6 +8,7 @@ import StarwoodCompareSlider from "@/components/StarwoodCompareSlider";
 import StarwoodRadarChart from "@/components/StarwoodRadarChart";
 import StarwoodPMNotified from "@/components/StarwoodPMNotified";
 import StarwoodPasswordGate from "@/components/StarwoodPasswordGate";
+import BackToTopButton from "@/components/BackToTopButton";
 
 export const metadata: Metadata = {
   title: "Starwood",
@@ -925,7 +926,7 @@ export default function StarwoodCaseStudy() {
             {/* Checklist */}
             <ul className="mb-8" style={{ listStyle: "none", padding: 0 }}>
               {[
-                "8-10 seeded errors spotted per each deal",
+                "8-10 seeded errors spotted per deal",
                 "All 75 errors detected by accountants",
                 "0 false acceptances",
               ].map((item, i) => (
@@ -1481,6 +1482,9 @@ export default function StarwoodCaseStudy() {
             </div>
           </section>
         </div>
+        {/* BackToTop is INSIDE the gate's children so it only mounts after
+            the password is entered — never visible in the locked banner state. */}
+        <BackToTopButton />
       </StarwoodPasswordGate>
 
       <Footer />

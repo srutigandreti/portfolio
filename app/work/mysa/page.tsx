@@ -3,6 +3,7 @@ import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import MysaPillars from "@/components/MysaPillars";
+import BackToTopButton from "@/components/BackToTopButton";
 
 export const metadata: Metadata = {
   title: "Mysa",
@@ -614,6 +615,7 @@ export default function MysaCaseStudy() {
         </div>
       </div>
 
+      <BackToTopButton />
       <Footer />
     </div>
   );

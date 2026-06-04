@@ -1,4 +1,5 @@
 import TransitionLink from "@/components/TransitionLink";
+import FlowerScroll from "@/components/FlowerScroll";
 
 export default function Header({ bg = "bg-beige/90" }: { bg?: string }) {
   return (
@@ -11,6 +12,10 @@ export default function Header({ bg = "bg-beige/90" }: { bg?: string }) {
       >
         Sruti Gandreti
       </TransitionLink>
+
+      {/* Decorative flower — desktop only. Rotates on scroll; click to
+          scroll-to-top when on a case-study page. */}
+      <FlowerScroll />
       <nav className="flex items-center gap-4 md:gap-8">
         <TransitionLink
           href="/#work"
