@@ -6,11 +6,11 @@ import { useRouter } from "next/navigation";
 
 // Subscribe-once helpers for useSyncExternalStore — defined at module scope so
 // React sees stable references and doesn't tear down the subscription on every
-// render. We key off `hover: none` so every touch device (phone, tablet
-// including iPad in *landscape*) gets the always-visible tooltips. A pure
-// viewport-width breakpoint missed iPad landscape (1024px wide), leaving
-// tablet users unable to discover the hotspots.
-const TOUCH_MQ = "(hover: none)";
+// render. The breakpoint matches Tailwind's `lg` (1024px), which is what the
+// page layout itself uses to switch between mobile/tablet and desktop. Keeping
+// interaction model + layout in sync prevents mismatched UX (e.g., desktop
+// layout with always-visible tablet tooltips, or vice versa).
+const TOUCH_MQ = "(max-width: 1023px)";
 
 function subscribeMobileMQ(cb: () => void) {
   const mq = window.matchMedia(TOUCH_MQ);

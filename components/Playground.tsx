@@ -318,7 +318,12 @@ export default function Playground() {
 
   useEffect(() => {
     const update = () => {
-      setIsTouch(window.matchMedia("(hover: none)").matches);
+      // Interaction model tracks the layout breakpoint (Tailwind `lg` = 1024px):
+      // below 1024 → tablet/mobile UI → touch interaction (drag + always-visible
+      // captions on tap); 1024 and up → desktop UI → click-carry interaction.
+      // This guarantees the affordance always matches what's on screen — no
+      // mismatch between "desktop layout" + "touch input model" combinations.
+      setIsTouch(window.innerWidth < 1024);
       setPhotoScale(window.innerWidth < 560 ? 0.6 : 1);
     };
     update();
