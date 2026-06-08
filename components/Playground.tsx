@@ -248,7 +248,31 @@ function centerCluster(raw: Photo[]): Photo[] {
   return raw.map((p) => ({ ...p, x: p.x + offsetX, y: p.y + offsetY }));
 }
 
+// Compress every photo's position toward the cluster center by `factor`. We
+// use this on mobile so the spacing between photos shrinks in step with the
+// shrunken photo widths (photoScale). Without it, photos render at 60% size
+// but the gaps stay at 100% — leaving a viewport-sized phone showing only
+// one photo at a time. With it, neighbors peek into the viewport.
+function compressCluster(photos: Photo[], factor: number): Photo[] {
+  if (photos.length === 0 || factor === 1) return photos;
+  const minX = Math.min(...photos.map((p) => p.x));
+  const maxX = Math.max(...photos.map((p) => p.x + p.width));
+  const minY = Math.min(...photos.map((p) => p.y));
+  const maxY = Math.max(...photos.map((p) => p.y + p.width * p.aspect));
+  const cx = (minX + maxX) / 2;
+  const cy = (minY + maxY) / 2;
+  return photos.map((p) => ({
+    ...p,
+    x: cx + (p.x - cx) * factor,
+    y: cy + (p.y - cy) * factor,
+  }));
+}
+
+// Match the photoScale value used on mobile — keeps gaps proportional.
+const MOBILE_POSITION_SCALE = 0.6;
+
 const PHOTOS: Photo[] = centerCluster(RAW_PHOTOS);
+const MOBILE_PHOTOS: Photo[] = compressCluster(PHOTOS, MOBILE_POSITION_SCALE);
 
 // Mobile initial-focus pick — guarantees at least one photo lands fully in
 // frame when a phone visitor first opens the photo wall. Falls back to the
@@ -328,7 +352,11 @@ export default function Playground() {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const wallRef = useRef<HTMLDivElement | null>(null);
   const [offsets, setOffsets] = useState<Record<string, Offset>>({});
-  const [zOrder, setZOrder] = useState<string[]>(() => PHOTOS.map((p) => p.id));
+  // Photo ids are stable across desktop/mobile arrays, so init z-order from
+  // the raw list — works regardless of which active set is in use.
+  const [zOrder, setZOrder] = useState<string[]>(() =>
+    RAW_PHOTOS.map((p) => p.id),
+  );
   const [carriedId, setCarriedId] = useState<string | null>(null);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   // Touch-only: which photo has been tapped (caption visible). Cleared when
@@ -364,6 +392,15 @@ export default function Playground() {
   useEffect(() => {
     photoScaleRef.current = photoScale;
   }, [photoScale]);
+
+  // Pick the photo set whose positions are compressed for mobile (so
+  // neighbors actually peek into a small viewport). Mirror it into a ref
+  // for the same reason as photoScaleRef.
+  const activePhotos = photoScale < 1 ? MOBILE_PHOTOS : PHOTOS;
+  const activePhotosRef = useRef<Photo[]>(activePhotos);
+  useEffect(() => {
+    activePhotosRef.current = activePhotos;
+  }, [activePhotos]);
   const carryRef = useRef<CarryState | null>(null);
   const dragRef = useRef<(DragState & { snapped?: boolean }) | null>(null);
   // Touch-only "pending" gesture — finger is down on a photo, but we don't
@@ -401,7 +438,7 @@ export default function Playground() {
     const st = el?.scrollTop ?? 0;
     const dx = clientX + sl - carry.pickupWallX;
     const dy = clientY + st - carry.pickupWallY;
-    const photo = PHOTOS.find((p) => p.id === carry.id)!;
+    const photo = activePhotosRef.current.find((p) => p.id === carry.id)!;
     const next = clampOffset(
       photo,
       { x: carry.originX + dx, y: carry.originY + dy },
@@ -500,7 +537,9 @@ export default function Playground() {
       const timer = window.setTimeout(() => {
         const hold = holdRef.current;
         if (!hold) return;
-        const photo = PHOTOS.find((p) => p.id === hold.photoId);
+        const photo = activePhotosRef.current.find(
+          (p) => p.id === hold.photoId,
+        );
         if (!photo) return;
         const existing = offsets[photo.id] ?? { x: 0, y: 0 };
         const elNow = rootRef.current;
@@ -597,7 +636,7 @@ export default function Playground() {
       cursorRef.current = { x: e.clientX, y: e.clientY };
       const sl = el.scrollLeft;
       const st = el.scrollTop;
-      const photo = PHOTOS.find((p) => p.id === drag.id);
+      const photo = activePhotosRef.current.find((p) => p.id === drag.id);
       if (!photo) return;
       // First move after activation: snap photo center to finger so it's
       // fully "in focus" — same UX as before, just relocated.
@@ -826,7 +865,9 @@ export default function Playground() {
             const drag = dragRef.current;
             const dx = cx + el.scrollLeft - drag.startWallX;
             const dy = cy + el.scrollTop - drag.startWallY;
-            const photo = PHOTOS.find((p) => p.id === drag.id)!;
+            const photo = activePhotosRef.current.find(
+              (p) => p.id === drag.id,
+            )!;
             const next = clampOffset(
               photo,
               { x: drag.originX + dx, y: drag.originY + dy },
@@ -838,7 +879,9 @@ export default function Playground() {
             const carry = carryRef.current;
             const dx = cx + el.scrollLeft - carry.pickupWallX;
             const dy = cy + el.scrollTop - carry.pickupWallY;
-            const photo = PHOTOS.find((p) => p.id === carry.id)!;
+            const photo = activePhotosRef.current.find(
+              (p) => p.id === carry.id,
+            )!;
             const next = clampOffset(
               photo,
               { x: carry.originX + dx, y: carry.originY + dy },
@@ -909,9 +952,12 @@ export default function Playground() {
 
     const PHONE_MAX = 560; // matches photoScale breakpoint
     if (window.innerWidth < PHONE_MAX) {
+      // Use MOBILE_PHOTOS (compressed positions) directly since the React
+      // state hasn't flipped to photoScale=0.6 yet at first paint.
       const focus =
-        PHOTOS.find((p) => p.id === MOBILE_FOCUS_PHOTO_ID) ?? PHOTOS[0];
-      const scale = 0.6; // matches the < 560 photoScale
+        MOBILE_PHOTOS.find((p) => p.id === MOBILE_FOCUS_PHOTO_ID) ??
+        MOBILE_PHOTOS[0];
+      const scale = MOBILE_POSITION_SCALE;
       const renderedW = focus.width * scale;
       const renderedH = renderedW * focus.aspect;
       const centerX = focus.x + renderedW / 2;
@@ -945,7 +991,7 @@ export default function Playground() {
         className={`${styles.wall}${ready ? " " + styles.ready : ""}`}
       >
         {zOrder.map((id, idx) => {
-          const photo = PHOTOS.find((p) => p.id === id)!;
+          const photo = activePhotos.find((p) => p.id === id)!;
           const offset = offsets[id] ?? { x: 0, y: 0 };
           const isActive = carriedId === id || draggingId === id;
           const style: CSSProperties = {
