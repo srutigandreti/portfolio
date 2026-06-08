@@ -33,9 +33,16 @@ type Photo = {
 const L = 0.75; // landscape display ratio (h/w)
 const P = 1.333; // portrait display ratio (h/w)
 
-// Scattered placement on a 2800 × 2000 wall — staggered y-positions, some
-// photos drift between horizontal bands to break the row feel.
-const PHOTOS: Photo[] = [
+// Wall dimensions — must match `.wall` in Playground.module.css. Used at
+// module load to center the photo cluster within the wall so the empty
+// space around the photos is even on top/bottom and left/right.
+const WALL_W = 3500;
+const WALL_H = 2500;
+
+// Original scattered placement. Positions are pre-shift; the centering pass
+// at the bottom of this block rebalances them inside the wall so visitors
+// open onto an evenly-padded cluster regardless of viewport size.
+const RAW_PHOTOS: Photo[] = [
   {
     id: "italy",
     src: "/playground/italy.jpg",
@@ -227,6 +234,27 @@ const PHOTOS: Photo[] = [
   },
 ];
 
+// Shift the photo cluster so the empty space around it is symmetric (same
+// padding on left/right and on top/bottom). Without this, the cluster sits
+// in the top-left of the wall and the empty space looks lopsided.
+function centerCluster(raw: Photo[]): Photo[] {
+  if (raw.length === 0) return raw;
+  const minX = Math.min(...raw.map((p) => p.x));
+  const maxX = Math.max(...raw.map((p) => p.x + p.width));
+  const minY = Math.min(...raw.map((p) => p.y));
+  const maxY = Math.max(...raw.map((p) => p.y + p.width * p.aspect));
+  const offsetX = (WALL_W - (maxX - minX)) / 2 - minX;
+  const offsetY = (WALL_H - (maxY - minY)) / 2 - minY;
+  return raw.map((p) => ({ ...p, x: p.x + offsetX, y: p.y + offsetY }));
+}
+
+const PHOTOS: Photo[] = centerCluster(RAW_PHOTOS);
+
+// Mobile initial-focus pick — guarantees at least one photo lands fully in
+// frame when a phone visitor first opens the photo wall. Falls back to the
+// first photo if the id isn't found.
+const MOBILE_FOCUS_PHOTO_ID = "tree";
+
 type Offset = { x: number; y: number };
 
 type CarryState = {
@@ -388,6 +416,12 @@ export default function Playground() {
   // so the "pickup then move freely" model has no equivalent on touch).
   const onPhotoClick = (e: React.MouseEvent<HTMLDivElement>, photo: Photo) => {
     e.stopPropagation();
+    // Desktop drag-to-pan that started on this photo just finished — suppress
+    // the synthetic click so carry-mode doesn't engage on top of the pan.
+    if (panMovedRef.current) {
+      panMovedRef.current = false;
+      return;
+    }
     // Touch: tap handled in onRootPointerUp (which fires before this synthetic
     // click). Returning early prevents a double-toggle of the caption.
     if (isTouch) return;
@@ -397,12 +431,15 @@ export default function Playground() {
       const droppedId = carryRef.current.id;
       carryRef.current = null;
       setCarriedId(null);
-      // Suppress the caption that would otherwise slide out via :hover
-      // because the cursor lands on the just-dropped photo.
-      setJustDroppedId(droppedId);
-      window.setTimeout(() => {
-        setJustDroppedId((prev) => (prev === droppedId ? null : prev));
-      }, 1200);
+      // Suppress the hover-caption ONLY if the cursor lands on the dropped
+      // photo (otherwise there's no hover to suppress). The flag is cleared
+      // by the photo's onMouseLeave — so the caption stays hidden as long
+      // as the cursor sits on the just-dropped photo, and reappears on the
+      // next legitimate hover (cursor leaves and comes back).
+      const dropEl = document.elementFromPoint(e.clientX, e.clientY);
+      if (dropEl?.closest(`[data-photo-id="${droppedId}"]`)) {
+        setJustDroppedId(droppedId);
+      }
       return;
     }
     // Pickup
@@ -433,6 +470,10 @@ export default function Playground() {
     startScrollLeft: number;
     startScrollTop: number;
   } | null>(null);
+  // Desktop only: when a pan that started on a photo actually moved past
+  // CLICK_THRESHOLD_PX, the trailing synthetic click on the photo must be
+  // suppressed — otherwise it would enter carry mode after a drag-to-pan.
+  const panMovedRef = useRef(false);
 
   const onRootPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     // Already carrying a photo (desktop)? Skip everything so the next click
@@ -496,17 +537,25 @@ export default function Playground() {
       return;
     }
 
-    if (photoId && !isTouch) {
-      // Desktop touching down on a photo — carry-mode handles it via onClick.
-      return;
+    // Desktop OR empty wall (touch): set up potential pan.
+    //
+    // Key difference between touch and desktop: on touch we capture the
+    // pointer immediately (touch pan is the whole gesture). On desktop, we
+    // DON'T capture upfront — if the user only clicks (no movement), we
+    // need the synthetic click to reach the photo's onClick so carry-mode
+    // can engage. Capturing on root steals the click. We capture lazily in
+    // onRootPointerMove once we know it's actually a drag.
+    if (isTouch) {
+      try {
+        el.setPointerCapture(e.pointerId);
+      } catch {
+        /* noop */
+      }
     }
-
-    // Empty wall: pan immediately.
-    try {
-      el.setPointerCapture(e.pointerId);
-    } catch {
-      /* noop */
-    }
+    // Kill any in-flight smooth wheel animation so it doesn't keep nudging
+    // the scroll position while the user is dragging.
+    wheelTargetRef.current = null;
+    panMovedRef.current = false;
     panRef.current = {
       pointerId: e.pointerId,
       startClientX: e.clientX,
@@ -590,6 +639,19 @@ export default function Playground() {
     if (pan && pan.pointerId === e.pointerId) {
       const dx = e.clientX - pan.startClientX;
       const dy = e.clientY - pan.startClientY;
+      if (!panMovedRef.current && Math.hypot(dx, dy) > CLICK_THRESHOLD_PX) {
+        panMovedRef.current = true;
+        // Movement confirmed → capture the pointer so the rest of the drag
+        // stays on root (lazy capture; we couldn't capture upfront on
+        // desktop without stealing a potential carry-mode click).
+        if (!isTouch) {
+          try {
+            el.setPointerCapture(e.pointerId);
+          } catch {
+            /* noop */
+          }
+        }
+      }
       el.scrollLeft = pan.startScrollLeft - dx;
       el.scrollTop = pan.startScrollTop - dy;
     }
@@ -639,7 +701,68 @@ export default function Playground() {
     }
   };
 
-  // ─── Pointer handlers: hold-and-drag ───
+  // ─── Wheel-to-pan (smooth, eased) ───
+  // Native wheel events fire chunky ~100px deltas which feel stepwise. We
+  // accumulate the deltas into a target scroll position and animate the
+  // actual scrollLeft/Top toward it each frame with an ease-out lerp, so the
+  // motion glides instead of jumping. Each new wheel adds onto the target,
+  // so rapid scrolls compound smoothly.
+  const wheelTargetRef = useRef<{ x: number; y: number } | null>(null);
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+
+    let rafId = 0;
+    let animating = false;
+
+    const tick = () => {
+      const target = wheelTargetRef.current;
+      if (!target) {
+        animating = false;
+        return;
+      }
+      const dx = target.x - el.scrollLeft;
+      const dy = target.y - el.scrollTop;
+      // Sub-pixel remainder — snap to target and end the loop.
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) {
+        el.scrollLeft = target.x;
+        el.scrollTop = target.y;
+        wheelTargetRef.current = null;
+        animating = false;
+        return;
+      }
+      // Ease-out: cover ~18% of remaining distance each frame. At 60fps that's
+      // ~95% complete in ~16 frames (~270ms) — fluid but still responsive.
+      el.scrollLeft += dx * 0.18;
+      el.scrollTop += dy * 0.18;
+      rafId = requestAnimationFrame(tick);
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const maxX = Math.max(0, el.scrollWidth - el.clientWidth);
+      const maxY = Math.max(0, el.scrollHeight - el.clientHeight);
+      const current = wheelTargetRef.current ?? {
+        x: el.scrollLeft,
+        y: el.scrollTop,
+      };
+      wheelTargetRef.current = {
+        x: Math.max(0, Math.min(maxX, current.x + e.deltaX)),
+        y: Math.max(0, Math.min(maxY, current.y + e.deltaY)),
+      };
+      if (!animating) {
+        animating = true;
+        rafId = requestAnimationFrame(tick);
+      }
+    };
+
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, []);
+
   // ─── Edge-scroll: while a photo is active (dragging or carrying) and the
   // cursor is near a viewport edge, pan the wall in that direction. Bounded
   // automatically by overflow:auto so the user can never scroll past the wall.
@@ -774,14 +897,37 @@ export default function Playground() {
     return () => document.removeEventListener("keydown", onKey);
   }, [router]);
 
-  // Center the initial scroll exactly on the wall on first mount, before the
-  // browser paints the hydrated DOM, so the user never sees the (0, 0) state.
+  // Set the initial scroll on first mount, before paint, so the user never
+  // sees the (0, 0) state. On phones we focus a single photo so the visitor
+  // lands with one image fully in frame and the rest scattered around the
+  // edges. On tablet+ we center on the wall midpoint (= cluster midpoint
+  // after the centerCluster pass).
   useIsoLayoutEffect(() => {
     const el = rootRef.current;
     if (!el) return;
     const { scrollWidth, clientWidth, scrollHeight, clientHeight } = el;
-    el.scrollLeft = Math.max(0, (scrollWidth - clientWidth) / 2);
-    el.scrollTop = Math.max(0, (scrollHeight - clientHeight) / 2);
+
+    const PHONE_MAX = 560; // matches photoScale breakpoint
+    if (window.innerWidth < PHONE_MAX) {
+      const focus =
+        PHOTOS.find((p) => p.id === MOBILE_FOCUS_PHOTO_ID) ?? PHOTOS[0];
+      const scale = 0.6; // matches the < 560 photoScale
+      const renderedW = focus.width * scale;
+      const renderedH = renderedW * focus.aspect;
+      const centerX = focus.x + renderedW / 2;
+      const centerY = focus.y + renderedH / 2;
+      el.scrollLeft = Math.max(
+        0,
+        Math.min(scrollWidth - clientWidth, centerX - clientWidth / 2),
+      );
+      el.scrollTop = Math.max(
+        0,
+        Math.min(scrollHeight - clientHeight, centerY - clientHeight / 2),
+      );
+    } else {
+      el.scrollLeft = Math.max(0, (scrollWidth - clientWidth) / 2);
+      el.scrollTop = Math.max(0, (scrollHeight - clientHeight) / 2);
+    }
     setReady(true);
   }, []);
 
@@ -821,6 +967,12 @@ export default function Playground() {
               className={classes.join(" ")}
               style={style}
               onClick={(e) => onPhotoClick(e, photo)}
+              onMouseLeave={() => {
+                // Once the cursor leaves a just-dropped photo, clear the
+                // hover-suppression flag so the next legitimate hover shows
+                // the caption normally.
+                setJustDroppedId((prev) => (prev === id ? null : prev));
+              }}
               role="button"
               aria-label={`${photo.location} ${photo.year}`}
             >
@@ -842,7 +994,7 @@ export default function Playground() {
       <div className={styles.hint}>
         {isTouch
           ? "Hold + Drag photos to move them • Swipe to pan"
-          : "Click photos to move them • Drag to pan"}
+          : "Click photos to move them • Scroll/drag to pan"}
         {!isTouch && (
           <>
             {" • "}
