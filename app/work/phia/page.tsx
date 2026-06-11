@@ -280,27 +280,39 @@ export default function PhiaCaseStudy() {
             </div>
           </div>
 
-          {/* ── Video placeholder ──────────────────────────────────────── */}
-          <div className="my-12 flex justify-center">
-            <div
-              className="relative w-full max-w-[500px]"
-              style={{ aspectRatio: "1 / 1" }}
-            >
-              <div
-                className="absolute inset-0 flex items-center justify-center"
-                style={{
-                  border: "1.5px dashed rgba(94,94,94,0.35)",
-                  backgroundColor: "rgba(94,94,94,0.04)",
-                }}
-              >
-                <span
-                  className="font-sans"
-                  style={{ fontSize: "0.9rem", color: "#5e5e5e" }}
-                >
-                  video insert
-                </span>
-              </div>
-            </div>
+          {/* Phia mobile vote UI video — autoplays on loop. Cropped
+              with belt-and-suspenders:
+                • overflow:hidden wrapper + width:150% break-out (1.5x)
+                  with symmetric negative margins keeps it centered while
+                  overflowing the column on both sides
+                • video width:125% + translateX shifts + clip-path clip
+                  to the middle 80% × top 95% of the source — all values
+                  are proportional, so the 1.5x wrapper scales the crop
+                  without changing what's visible. */}
+          <div
+            className="relative my-12"
+            style={{
+              width: "150%",
+              marginLeft: "-25%",
+              marginRight: "-25%",
+              overflow: "hidden",
+              transform: "translateX(20%)",
+            }}
+          >
+            <video
+              src="/videos/phia-mobile-vote-ui.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              style={{
+                display: "block",
+                width: "125%",
+                transform: "translateX(-20%)",
+                height: "auto",
+                clipPath: "inset(5% 20% 5% 0)",
+              }}
+            />
           </div>
 
           {/* ── User Understanding ──────────────────────────────────────── */}
@@ -655,70 +667,41 @@ export default function PhiaCaseStudy() {
             >
               This was not just a resize challenge. This opened the context
               wider, to the device where the circle usually lives. And begs the
-              question how do people respond to a vote.
+              question of how do people respond to a vote.
             </p>
 
-            {/* Phia mobile vote UI video — autoplays on loop. Cropped
-                with belt-and-suspenders:
-                  • overflow:hidden wrapper + width:125% + marginLeft:-12.5%
-                    pushes 12.5% of wrapper-width off each side of the
-                    wrapper (= 10% of the video element's own width)
-                  • clip-path on the video ALSO clips 10% from the right
-                    and 5% from the bottom — guarantees the right crop
-                    even if a parent's layout/overflow setting interferes
-                    with the wrapper's overflow:hidden
-                  • mx-auto on the wrapper itself, no outer flex parent,
-                    so nothing else can mess with the wrapper's width. */}
+            {/* Phia voter (side) video — autoplays on loop. Modeled on the
+                mobile vote-UI video above: centred and break-out wide.
+                Cropped 30% off the left and right (full height kept), which
+                trims the black side-bars to a tight portrait frame of the
+                phone. Mechanism: an overflow:hidden box capped at maxWidth
+                150% whose aspectRatio is the KEPT region — middle 40% width ×
+                full height of the 3840×2160 source = 1536 × 2160 — holding a
+                centred video blown up to width:250% so its middle 40% fills
+                the box (= 30% off each side). */}
             <div
-              className="relative mt-10"
+              className="relative my-12"
               style={{
-                // 1.5x size: the cropped result always fills the wrapper, and
-                // every crop value below (video width:125%, the translateX
-                // shifts, the clip-path insets) is a PERCENTAGE of this
-                // wrapper — so rendering the wrapper at 1.5x scales the whole
-                // crop proportionally without changing what's visible.
-                //
-                // This column is only max-w-[1000px] (and w-full would cap us
-                // there), so to grow past it we break OUT of the column:
-                // width:150% + symmetric negative margins keep it centered on
-                // the column while overflowing both sides. height is auto, so
-                // the layout still reflows (no overlap) instead of a
-                // transform:scale that would overlap neighbours.
                 width: "150%",
                 marginLeft: "-25%",
                 marginRight: "-25%",
                 overflow: "hidden",
-                transform: "translateX(20%)",
+                transform: "translateX(33%)",
+                borderRadius: "20px",
               }}
             >
               <video
-                src="/videos/phia-mobile-vote-ui.mp4"
+                src="/videos/phia-voter-side.mp4"
                 autoPlay
                 loop
                 muted
                 playsInline
                 style={{
                   display: "block",
-                  // Video element is 25% wider than the wrapper (= 100/80).
-                  // It would normally overflow only on the right side.
-                  // We shift it left visually with transform:translateX
-                  // (NOT marginLeft — keeps the layout box untouched so
-                  // mx-auto centering on the wrapper isn't disturbed by
-                  // any margin tricks here).
-                  // translateX is a % of the ELEMENT'S OWN width, so
-                  // -10% of 125% wrapper-width = -12.5% wrapper-width,
-                  // splitting the overflow evenly between left and right.
                   width: "125%",
-                  transform: "translateX(-20%)",
+                  transform: "translateX(-33%)",
                   height: "auto",
-                  // clip-path explicitly clips the right 10% of the video
-                  // element (= 12.5% wrapper, aligning with wrapper's
-                  // right edge) plus the bottom 5%. Combined with the
-                  // wrapper's overflow:hidden (which clips the left
-                  // 12.5% wrapper-width that the translate pushed past
-                  // the wrapper's left edge), the final visible content
-                  // is the middle 80% × top 95% of the source video.
-                  clipPath: "inset(5% 20% 5% 0)",
+                  clipPath: "inset(0% 33% 1px 0 round 20px)",
                 }}
               />
             </div>
