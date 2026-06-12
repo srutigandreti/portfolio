@@ -4,6 +4,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PhiaExtensionDecisions from "@/components/PhiaExtensionDecisions";
 import PhiaVotingAnimation from "@/components/PhiaVotingAnimation";
+import PhiaInviteAnimation from "@/components/PhiaInviteAnimation";
+import BackToTopButton from "@/components/BackToTopButton";
 
 export const metadata: Metadata = {
   title: "Phia",
@@ -705,10 +707,179 @@ export default function PhiaCaseStudy() {
                 }}
               />
             </div>
+
+            <h2
+              className="font-display font-bold mb-4 mt-14"
+              style={{
+                fontSize: "clamp(1rem, 1.5vw, 1.25rem)",
+                color: "#8b6b41",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              The Built-In Growth Loop
+            </h2>
+            <p
+              className="font-sans font-normal leading-relaxed mb-4"
+              style={{
+                fontSize: "clamp(1rem, 1.625vw, 1.125rem)",
+                color: "#5e5e5e",
+              }}
+            >
+              Every time a user sends a vote request, they&apos;re potentially
+              funneling people into the Phia ecosystem who may have never heard
+              of it.
+            </p>
+            <p
+              className="font-sans font-normal leading-relaxed"
+              style={{
+                fontSize: "clamp(0.875rem, 1.325vw, 0.975rem)",
+                color: "#5e5e5e",
+              }}
+            >
+              If someone in your circle doesn&apos;t have Phia, they get a text.
+              The same way you&apos;d hear from a friend. The vote only means
+              something if the voter is invested. Filter for people who actually
+              care and get a real user out of it.
+            </p>
+
+            {/* Looped iMessage visual: blue invite appears, a typing bubble
+                rises where the reply will land, then the gray reply pops in. */}
+            <div className="my-12">
+              <PhiaInviteAnimation />
+            </div>
+          </section>
+
+          {/* ── Beyond the Competition ──────────────────────────────────── */}
+          <section className="mb-10">
+            <h2
+              className="font-display font-bold mb-4"
+              style={{
+                fontSize: "clamp(1rem, 1.5vw, 1.25rem)",
+                color: "#8b6b41",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Beyond the Competition
+            </h2>
+            <p
+              className="font-sans font-normal leading-relaxed mb-4"
+              style={{
+                fontSize: "clamp(1rem, 1.625vw, 1.125rem)",
+                color: "#5e5e5e",
+              }}
+            >
+              Given more time, I&apos;d conduct deeper research and continue
+              building out the product.
+            </p>
+            <p
+              className="font-sans font-normal leading-relaxed"
+              style={{
+                fontSize: "clamp(0.875rem, 1.325vw, 0.975rem)",
+                color: "#5e5e5e",
+              }}
+            >
+              I identified five metrics to measure whether Circle Vote actually
+              works. The two flows I&apos;d prioritize next: the circle creation
+              process and a personal votes dashboard where users can track
+              active votes and see how their circle responded.
+            </p>
+
+            {/* Five-metric board — 90% of the content column width, centered */}
+            <div className="my-12 flex justify-center">
+              <Image
+                src="/images/phia-metrics.png"
+                alt="Five success metrics for Circle Vote: receiver-to-user conversion, time to decision, voting completion rate, post-purchase regret rate, and circle engagement frequency."
+                width={2265}
+                height={3414}
+                sizes="(max-width: 1000px) 90vw, 792px"
+                className="block h-auto"
+                style={{ width: "60%" }}
+                quality={95}
+              />
+            </div>
+          </section>
+
+          {/* ── Reflections ───────────────────────────────────────────────── */}
+          <section className="mt-20 mb-0">
+            <h2
+              className="font-display font-bold mb-10"
+              style={{
+                fontSize: "clamp(1rem, 1.5vw, 1.25rem)",
+                color: "#8b6b41",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Reflections
+            </h2>
+
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "32px" }}
+            >
+              <section className="mb-10">
+                <p
+                  className="font-sans font-normal leading-relaxed mb-4"
+                  style={{
+                    fontSize: "clamp(1rem, 1.625vw, 1.125rem)",
+                    color: "#5e5e5e",
+                  }}
+                >
+                  Prioritizing Progress Over Perfection
+                </p>
+                <p
+                  className="font-sans font-normal leading-relaxed"
+                  style={{
+                    fontSize: "clamp(0.875rem, 1.325vw, 0.975rem)",
+                    color: "#5e5e5e",
+                  }}
+                >
+                  I had to be scrappy and move quickly. With only 24 hours to
+                  build a feature that reduced friction in shopping, I started
+                  with a problem I knew from my own experience. Whenever I buy
+                  clothes online, I usually text friends for their opinions
+                  before checking out. That became my focus, and instead of
+                  getting stuck thinking through every edge case, I designed the
+                  simplest version first. A browser extension where people could
+                  send items to friends and collect votes. Having something
+                  tangible to show during feedback helped the conversation stay
+                  grounded in the product and led people to ask how the
+                  experience would work on mobile and across different screen
+                  sizes.
+                </p>
+              </section>
+
+              <section className="mb-10">
+                <p
+                  className="font-sans font-normal leading-relaxed mb-4"
+                  style={{
+                    fontSize: "clamp(1rem, 1.625vw, 1.125rem)",
+                    color: "#5e5e5e",
+                  }}
+                >
+                  Taking the Unconventional Route
+                </p>
+                <p
+                  className="font-sans font-normal leading-relaxed"
+                  style={{
+                    fontSize: "clamp(0.875rem, 1.325vw, 0.975rem)",
+                    color: "#5e5e5e",
+                  }}
+                >
+                  I flew from San Francisco to New York for this experience
+                  without knowing anyone there. Most of the designers came from
+                  the New York and Boston area, and I was the only participant
+                  from the West Coast. The chance to spend a weekend building
+                  alongside talented designers felt too interesting to pass up.
+                  I left with new connections, a feature I&apos;m genuinely
+                  proud of, and more confidence in saying yes to opportunities
+                  that don&apos;t follow the expected path.
+                </p>
+              </section>
+            </div>
           </section>
         </main>
       </div>
 
+      <BackToTopButton />
       <Footer />
 
       <style>{`

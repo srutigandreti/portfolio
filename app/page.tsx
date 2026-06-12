@@ -7,10 +7,10 @@ import MobileProjectCardList from "@/components/MobileProjectCard";
 
 const projects = [
   {
-    slug: "mysa",
-    src: "/images/mysa-front-2.png",
-    back: "/images/mysa-back-2.png",
-    alt: "Mysa",
+    slug: "phia",
+    src: "/images/phia-front-2.png",
+    back: "/images/phia-back-2.png",
+    alt: "Phia",
     width: 2031,
     height: 1302,
     backWidth: 2031,
@@ -29,10 +29,10 @@ const projects = [
     tilt: 10,
   },
   {
-    slug: "phia",
-    src: "/images/phia-front-2.png",
-    back: "/images/phia-back-2.png",
-    alt: "Phia",
+    slug: "mysa",
+    src: "/images/mysa-front-2.png",
+    back: "/images/mysa-back-2.png",
+    alt: "Mysa",
     width: 2031,
     height: 1302,
     backWidth: 2031,

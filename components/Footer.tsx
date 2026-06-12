@@ -244,17 +244,31 @@ export default function Footer({ bg: _bg }: { bg?: string }) {
     const ro = new ResizeObserver(setup);
     ro.observe(footer);
 
-    function onMove(e: MouseEvent) {
+    function setPoint(clientX: number, clientY: number) {
       const r = canvas!.getBoundingClientRect();
-      s.mx = e.clientX - r.left;
-      s.my = e.clientY - r.top;
+      s.mx = clientX - r.left;
+      s.my = clientY - r.top;
+    }
+    function onMove(e: MouseEvent) {
+      setPoint(e.clientX, e.clientY);
     }
     function onLeave() {
       s.mx = -1;
       s.my = -1;
     }
+    // Touch: same effect on phones/tablets — drag a finger to sink the cells.
+    // Listeners stay passive (no scroll blocking); the per-move
+    // getBoundingClientRect keeps the dimple accurate even as the page scrolls.
+    function onTouch(e: TouchEvent) {
+      const t = e.touches[0];
+      if (t) setPoint(t.clientX, t.clientY);
+    }
     footer.addEventListener("mousemove", onMove);
     footer.addEventListener("mouseleave", onLeave);
+    footer.addEventListener("touchstart", onTouch, { passive: true });
+    footer.addEventListener("touchmove", onTouch, { passive: true });
+    footer.addEventListener("touchend", onLeave);
+    footer.addEventListener("touchcancel", onLeave);
 
     function draw(t: number) {
       s.raf = requestAnimationFrame(draw);
@@ -326,6 +340,10 @@ export default function Footer({ bg: _bg }: { bg?: string }) {
       ro.disconnect();
       footer.removeEventListener("mousemove", onMove);
       footer.removeEventListener("mouseleave", onLeave);
+      footer.removeEventListener("touchstart", onTouch);
+      footer.removeEventListener("touchmove", onTouch);
+      footer.removeEventListener("touchend", onLeave);
+      footer.removeEventListener("touchcancel", onLeave);
     };
   }, []);
 
