@@ -377,7 +377,7 @@ export default function PhiaCaseStudy() {
                 </ul>
               </div>
               <div className="flex justify-center md:justify-end">
-                <div className="phia-photo-card relative w-full max-w-[260px] isolate">
+                <div className="phia-photo-card relative w-full max-w-[195px] isolate">
                   {/* Window-tabs icon — right border, just below the top
                       corner curve, shifted further out. BEHIND the photo. */}
                   <Image
@@ -401,7 +401,7 @@ export default function PhiaCaseStudy() {
                     alt="Carmen, a young woman in a yellow turtleneck"
                     width={720}
                     height={1080}
-                    sizes="(max-width: 768px) 260px, 260px"
+                    sizes="195px"
                     className="block rounded-[18px] relative"
                     style={{
                       width: "100%",
@@ -434,14 +434,14 @@ export default function PhiaCaseStudy() {
             {/* ── Meet Emma — photo left, text right ──────────────────── */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div className="flex justify-center md:justify-start order-2 md:order-1">
-                <div className="phia-photo-card relative w-full max-w-[260px] isolate">
+                <div className="phia-photo-card relative w-full max-w-[195px] isolate">
                   {/* Emma photo — natural aspect (744×1080) */}
                   <Image
                     src="/images/phia-emma.png"
                     alt="Emma, a young woman with auburn hair in a scarf"
                     width={744}
                     height={1080}
-                    sizes="(max-width: 768px) 260px, 260px"
+                    sizes="195px"
                     className="block rounded-[18px] relative"
                     style={{
                       width: "100%",
@@ -667,12 +667,10 @@ export default function PhiaCaseStudy() {
                 full height of the 3840×2160 source = 1536 × 2160 — holding a
                 centred video blown up to width:250% so its middle 40% fills
                 the box (= 30% off each side). */}
-            {/* Scaled to 90% (10% smaller) about its centre — keeps the
-                break-out crop math below untouched. */}
-            <div
-              className="my-12"
-              style={{ transform: "scale(0.9)", transformOrigin: "center" }}
-            >
+            {/* Desktop: scaled to 90% about its centre. On phones the shrink
+                is dropped and the break-out below is widened instead, so the
+                voter frame grows to ~content width while keeping its crop. */}
+            <div className="my-12 phia-bo-side-wrap">
               <div className="relative phia-bo phia-bo-side">
                 <video
                   src="/videos/phia-voter-side.mp4"
@@ -758,16 +756,16 @@ export default function PhiaCaseStudy() {
               works.
             </p>
 
-            {/* Five-metric board — 90% of the content column width, centered */}
+            {/* Five-metric board — full width on phones/tablets so the text
+                stays readable, narrowing to 60% only on larger screens. */}
             <div className="my-12 flex justify-center">
               <Image
                 src="/images/phia-metrics.png"
                 alt="Five success metrics for Circle Vote: receiver-to-user conversion, time to decision, voting completion rate, post-purchase regret rate, and circle engagement frequency."
                 width={2265}
                 height={3414}
-                sizes="(max-width: 1000px) 90vw, 792px"
-                className="block h-auto"
-                style={{ width: "60%" }}
+                sizes="(max-width: 768px) 100vw, 600px"
+                className="block h-auto w-full md:w-[60%]"
                 quality={95}
               />
             </div>
@@ -887,10 +885,13 @@ export default function PhiaCaseStudy() {
           width: 125%;
           height: auto;
         }
-        .phia-bo-ui { transform: translateX(20%); }
+        .phia-bo-ui {
+          transform: translateX(20%);
+          border-radius: 20px;
+        }
         .phia-bo-ui > video {
           transform: translateX(-20%);
-          clip-path: inset(5% 20% 5% 0);
+          clip-path: inset(5% 20% 5% 20% round 20px);
         }
         .phia-bo-side {
           transform: translateX(33%);
@@ -900,16 +901,42 @@ export default function PhiaCaseStudy() {
           transform: translateX(-33%);
           clip-path: inset(0% 33% 1px 0 round 20px);
         }
+        /* Desktop: render the voter-side frame 10% smaller about its centre. */
+        .phia-bo-side-wrap {
+          transform: scale(0.9);
+          transform-origin: center;
+        }
         @media (max-width: 767px) {
-          .phia-bo {
-            width: 100%;
-            margin-left: 0;
-            margin-right: 0;
+          /* Mobile-vote-UI video on phones: a centered break-out sized so its
+             middle-60% crop (clip-path insets 20% each side) fills ~96% of the
+             content column. The clip is symmetric and the wrapper is centered
+             (symmetric negative margins, no translateX), so the visible frame
+             is centered in the column. Width 160% → visible ≈ 0.6 × 1.6 =
+             0.96 of the column. */
+          .phia-bo-ui {
+            width: 160%;
+            margin-left: -30%;
+            margin-right: -30%;
             transform: none;
           }
-          .phia-bo > video {
+          .phia-bo-ui > video {
             width: 100%;
             transform: none;
+          }
+          /* Voter-side: drop the 0.9 shrink and widen the break-out so the
+             cropped frame grows to ~content width. All crop values stay
+             proportional, so the SAME region of the video is shown — only
+             bigger. Widening (vs. transform-scale) grows the layout box too,
+             so it never overlaps neighbouring text. translateX is left at the
+             inherited 33%, which centres the frame in the column at any
+             break-out width. */
+          .phia-bo-side-wrap {
+            transform: none;
+          }
+          .phia-bo-side {
+            width: 210%;
+            margin-left: -55%;
+            margin-right: -55%;
           }
         }
 

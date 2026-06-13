@@ -19,8 +19,7 @@ const DECISIONS: Decision[] = [
     id: 1,
     title: "Product context always visible",
     info: [
-      "Product image, price, and brand stay in view entire time.",
-      "No switching screens, no losing context.",
+      "Product image, price, and brand stay in view entire time. No switching screens, no losing context.",
     ],
     // Top-right, aligned with the product card area
     position: { top: "18%", right: "-3%" },
@@ -29,8 +28,7 @@ const DECISIONS: Decision[] = [
     id: 2,
     title: "Make personal context optional",
     info: [
-      "Sender's note gives the circle better signal to vote.",
-      "But requiring it can kill the momentum of the moment.",
+      "Sender's note gives the circle better signal to vote. But requiring it can kill the momentum of the moment.",
     ],
     // Aligned with the "Your comment (optional)" label, pushed further off
     // the right edge so it overlaps less with the comment input.
@@ -41,9 +39,7 @@ const DECISIONS: Decision[] = [
     id: 3,
     title: "Default everyone in, allow opt out",
     info: [
-      "Your full circle is toggled on by default.",
-      "Removing someone is a lighter action than adding them.",
-      "Fewer taps, faster send.",
+      "Your full circle is toggled on by default. Removing someone is a lighter action than adding them. Fewer taps, faster send.",
     ],
     // Pushed to the complete left side of the extension so the compact title
     // sits in the grid-background area and doesn't intersect any extension
@@ -55,8 +51,7 @@ const DECISIONS: Decision[] = [
     id: 4,
     title: "Let sender set the urgency",
     info: [
-      "Not every purchase has the same timeline.",
-      "Sender controls the pressure so that the circle knows exactly how fast their opinion is needed.",
+      "Not every purchase has the same timeline. Sender controls the pressure so that the circle knows exactly how fast their opinion is needed.",
     ],
     // Lower section; anchored top-right so the bubble grows down-and-left
     // (title sits near the original spot, info unfurls toward bottom-left)
@@ -90,14 +85,14 @@ export default function PhiaExtensionDecisions() {
 
   return (
     <div className="my-12">
-      <div className="relative w-full max-w-[640px] mx-auto">
+      <div className="relative w-full max-w-[480px] mx-auto">
         {/* Base: whole extension UI */}
         <Image
           src="/images/phia-extension-whole.png"
           alt="Phia browser extension showing the Circle Vote interface"
           width={1995}
           height={3264}
-          sizes="(max-width: 768px) 100vw, 640px"
+          sizes="(max-width: 768px) 100vw, 480px"
           priority
           className="block w-full h-auto"
           style={{ maxWidth: "none" }}
@@ -111,7 +106,7 @@ export default function PhiaExtensionDecisions() {
             alt=""
             width={1995}
             height={3264}
-            sizes="(max-width: 768px) 100vw, 640px"
+            sizes="(max-width: 768px) 100vw, 480px"
             aria-hidden
             className="absolute inset-0 w-full h-auto transition-opacity duration-500 ease-out"
             style={{
@@ -179,7 +174,7 @@ export default function PhiaExtensionDecisions() {
           min-height prevents the page from jumping when slides change. */}
       {isMobile && (
         <div
-          className="max-w-[640px] mx-auto mt-4 px-4"
+          className="max-w-[480px] mx-auto mt-4 px-4"
           style={{ minHeight: "11em" }}
           aria-live="polite"
         >
