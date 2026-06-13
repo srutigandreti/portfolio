@@ -67,8 +67,8 @@ export default function AboutPage() {
                   color: "#5e5e5e",
                 }}
               >
-                A designer + engineer driven by curiosity, purpose, and a love
-                for creating.
+                Product designer driven by curiosity, purpose, and a love for
+                creating.
               </p>
 
               {/* Body */}
@@ -80,10 +80,10 @@ export default function AboutPage() {
                 }}
               >
                 <p>
-                  With a background in software engineering, I love working at
-                  the intersection of tech, design, and people. I collaborate
-                  with technical fluency and genuine user empathy to help
-                  transform ambiguity into thoughtfully designed, useful
+                  With a background in Human-Computer Interaction, I love
+                  working at the intersection of tech, design, and people. I
+                  collaborate with technical fluency and genuine user empathy to
+                  help transform ambiguity into thoughtfully designed, useful
                   products/brands.
                 </p>
 

@@ -23,6 +23,15 @@ body {
   margin: 0;
   padding: 0;
   scroll-behavior: smooth;
+  /* Stop any rogue wide element (e.g. a full-bleed break-out) from making
+     the page wider than the viewport. This MUST be on <html> too, not just
+     <body>: on mobile browsers `overflow-x: hidden` on <body> alone does not
+     constrain the layout viewport, so the page still grows wider than the
+     screen and the browser auto-zooms out — which reads as the site being
+     "zoomed in" with empty space on the right. Clipping at the root keeps
+     the layout viewport pinned to the device width at every screen size. */
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
@@ -34,10 +43,7 @@ body {
   font-weight: 400;
   font-synthesis: none;
   color: #5e5e5e;
-  /* Stop any rogue wide element from making the page wider than the
-     viewport — mobile browsers auto-zoom out when that happens, which
-     reads as the whole site being "zoomed in" on phones. */
-  overflow-x: hidden;
+  position: relative;
 }
 
 img,

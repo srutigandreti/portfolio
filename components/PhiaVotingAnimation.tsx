@@ -18,11 +18,6 @@ const MIDDLE_SWITCH_MS =
 const RING_RADIUS = 8;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
-// Blue of the "Your circle is leaning yes" bar in the voting-start image.
-// Tweak if it doesn't perfectly match — used to cover the baked-in
-// "6 hrs remaining" text and ring so the live, animated version replaces it.
-const BAR_BLUE = "#084BE7";
-
 export default function PhiaVotingAnimation() {
   const [phase, setPhase] = useState<"start" | "middle" | "end">("start");
   const [hours, setHours] = useState(COUNTDOWN_HOURS);
@@ -113,81 +108,51 @@ export default function PhiaVotingAnimation() {
       <Image
         src={
           phase === "start"
-            ? "/images/phia-voting-start-v9.png"
+            ? "/images/phia-voting-start-v11.png"
             : phase === "middle"
-              ? "/images/phia-voting-middle-v2.png"
-              : "/images/phia-voting-end-v6.png"
+              ? "/images/phia-voting-middle-v4.png"
+              : "/images/phia-voting-end-v8.png"
         }
         alt="Phia voting state — circle responses arriving in real time"
         width={1971}
-        height={3240}
+        height={2625}
         sizes="(max-width: 768px) 100vw, 640px"
         className="block w-full h-auto"
         style={{ maxWidth: "none" }}
       />
 
-      {/* Full blue banner overlay — covers the baked-in bar in BOTH
-          images. Spans the bar's full width, renders the live left-side
-          headline + right-side state (countdown ring during start,
-          completion check during end). */}
+      {/* Live countdown timer — a short blue pill anchored to the RIGHT end
+          of the baked-in bar (not a full-width cover), so the bar's baked-in
+          "Your circle is leaning yes" / "says: get it" text stays visible.
+          Its background is the exact bar blue (#084BE7) and it sits within
+          the bar's height, so it blends seamlessly — only the white ring +
+          "X hrs remaining" reads on top. At the end it shows the check.
+          Vertically centred on the bar (bar centre ≈ 77.9% of the image). */}
       <div
-        className="absolute flex items-center justify-between"
+        className="absolute flex items-center"
         style={{
-          top: "76%",
-          left: "15%",
-          right: "15%",
-          paddingTop: ".55em",
-          paddingBottom: ".55em",
-          paddingLeft: "0.9em",
-          paddingRight: "0.5em",
-          backgroundColor: BAR_BLUE,
-          color: "white",
+          top: "77.89%",
+          right: "16.5%",
+          transform: "translateY(-50%)",
+          // No background — the label sits directly on the baked-in blue bar,
+          // so there's no pill to poke past the bar's rounded bottom edge.
+          // Slightly muted white so the live label sits a touch softer than
+          // the baked-in text rather than glaring pure-white.
+          color: "rgba(255,255,255,0.78)",
           fontFamily: '"PPNeueMontreal", ui-sans-serif, system-ui, sans-serif',
           // 400 → PPNeueMontreal-Regular.otf. Anything outside 400/500 with
           // font-synthesis:none falls back to ui-sans-serif (much heavier).
           fontWeight: 400,
-          // Container-query based: 2.4cqw = 2.4% of the parent wrapper's
-          // width (NOT viewport). On every viewport ≥ ~700px the wrapper
-          // hits its 640px cap, so 2.4cqw resolves to ~15.4px — clamped at
-          // 0.94rem so it stays exactly the same as the desktop look.
-          // On narrower mobile viewports the wrapper shrinks proportionally,
-          // and so does the font — the bar/text ratio stays identical at
-          // every size for a unified responsive look. Floor at 0.7rem
-          // (~11px) so the text never drops below readability on tiny
-          // phones.
-          fontSize: "clamp(0.7rem, 2.4cqw, 0.94rem)",
+          // PURE cqw (no rem clamp): the font is a fixed % of the wrapper
+          // width, exactly like the baked-in bar, so the text scales in
+          // lockstep with the bar across all window sizes. Sized to the
+          // baked-in bar text: Figma 12px in the 657px design frame = 1.83cqw.
+          fontSize: "1.83cqw",
           lineHeight: 1,
-          borderRadius: "999px",
           whiteSpace: "nowrap",
         }}
       >
-        {/* Left headline. The mood word ("yes" / "get it") is medium-
-            weight (500) so it pops against the regular-weight setup.
-            min-width:0 lets it shrink below its content's min-content size
-            if the bar is narrow, but whiteSpace:nowrap keeps it on a
-            single line (overflowing the pill is preferable to wrapping). */}
-        <span
-          style={{
-            transition: "opacity 250ms ease",
-            whiteSpace: "nowrap",
-            minWidth: 0,
-          }}
-        >
-          {phase === "end" ? (
-            <>
-              Your circle says: <span style={{ fontWeight: 500 }}>get it</span>
-            </>
-          ) : (
-            <>
-              Your circle is leaning{" "}
-              <span style={{ fontWeight: 500 }}>yes</span>
-            </>
-          )}
-        </span>
-
-        {/* Right side: countdown + ring (start) OR "Voting complete" + check (end).
-            flex-shrink:0 so this group never collapses below its natural
-            width — the headline (which CAN shrink) absorbs any tight fit. */}
+        {/* Countdown + ring (start/middle) OR "Voting complete" + check (end). */}
         <div
           className="flex items-center"
           style={{
@@ -201,9 +166,8 @@ export default function PhiaVotingAnimation() {
               transition: "opacity 250ms ease",
               whiteSpace: "nowrap",
               flexShrink: 0,
-              // ~2pt smaller than the headline (same ratio used on the
-              // Decision bubble subtext where -4pt = 0.8em).
-              fontSize: "0.9em",
+              // Matches the baked-in bar text exactly (1em = 1.83cqw = 12px).
+              fontSize: "1em",
             }}
           >
             {phase === "end" ? "Voting complete" : `${hours} hrs remaining`}

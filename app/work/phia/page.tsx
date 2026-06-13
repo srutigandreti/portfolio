@@ -65,21 +65,6 @@ export default function PhiaCaseStudy() {
             Shopping Experience
           </h1>
 
-          {/* Lede */}
-          <p
-            className="font-sans font-normal leading-relaxed mb-12"
-            style={{
-              fontSize: "clamp(1.025rem, 1.75vw, 1.175rem)",
-              color: "#5e5e5e",
-            }}
-          >
-            Shoppers waste hours deciding whether to buy. This is the
-            trust-based voting system I researched and designed in 24 hours that
-            transforms solo shopping into collaborative decision-making, keeping
-            every choice in the shopper&apos;s control while creating a new
-            growth engine.
-          </p>
-
           {/* Meta table */}
           <div
             className="grid grid-cols-2 md:grid-cols-4 gap-y-3 mb-14 border-t border-b py-8"
@@ -107,6 +92,19 @@ export default function PhiaCaseStudy() {
               </div>
             ))}
           </div>
+
+          {/* Lede */}
+          <p
+            className="font-sans font-normal leading-relaxed mb-12"
+            style={{
+              fontSize: "clamp(1.025rem, 1.75vw, 1.175rem)",
+              color: "#5e5e5e",
+            }}
+          >
+            Shoppers waste hours deciding whether to buy. This is the
+            trust-based voting system I researched and designed in 24 hours that
+            transforms solo shopping into collaborative decision-making.
+          </p>
 
           {/* ── The Problem ────────────────────────────────────────────── */}
           <section className="mb-10">
@@ -172,7 +170,7 @@ export default function PhiaCaseStudy() {
               }}
             >
               85% of online shoppers regret an impulse purchase according to
-              Investopedia
+              Investopedia.
             </p>
             <p
               className="font-sans font-normal leading-relaxed"
@@ -182,8 +180,7 @@ export default function PhiaCaseStudy() {
               }}
             >
               Shopping is currently a broken process. Drowning in
-              analysis-paralysis. Second-guessing decisions. Lacking trusted
-              opinions when it matters the most.
+              analysis-paralysis. Second-guessing decisions.
             </p>
           </section>
 
@@ -291,29 +288,13 @@ export default function PhiaCaseStudy() {
                   to the middle 80% × top 95% of the source — all values
                   are proportional, so the 1.5x wrapper scales the crop
                   without changing what's visible. */}
-          <div
-            className="relative my-12"
-            style={{
-              width: "150%",
-              marginLeft: "-25%",
-              marginRight: "-25%",
-              overflow: "hidden",
-              transform: "translateX(20%)",
-            }}
-          >
+          <div className="relative my-12 phia-bo phia-bo-ui">
             <video
               src="/videos/phia-mobile-vote-ui.mp4"
               autoPlay
               loop
               muted
               playsInline
-              style={{
-                display: "block",
-                width: "125%",
-                transform: "translateX(-20%)",
-                height: "auto",
-                clipPath: "inset(5% 20% 5% 0)",
-              }}
             />
           </div>
 
@@ -633,7 +614,12 @@ export default function PhiaCaseStudy() {
               circle is leaning.
             </p>
 
-            <div className="mt-10">
+            {/* 25% smaller across all breakpoints: 75% of the column, capped
+                at 480px (= the component's 640px cap × 0.75), centered. */}
+            <div
+              className="mt-10 mx-auto"
+              style={{ width: "75%", maxWidth: "480px" }}
+            >
               <PhiaVotingAnimation />
             </div>
           </section>
@@ -681,31 +667,21 @@ export default function PhiaCaseStudy() {
                 full height of the 3840×2160 source = 1536 × 2160 — holding a
                 centred video blown up to width:250% so its middle 40% fills
                 the box (= 30% off each side). */}
+            {/* Scaled to 90% (10% smaller) about its centre — keeps the
+                break-out crop math below untouched. */}
             <div
-              className="relative my-12"
-              style={{
-                width: "150%",
-                marginLeft: "-25%",
-                marginRight: "-25%",
-                overflow: "hidden",
-                transform: "translateX(33%)",
-                borderRadius: "20px",
-              }}
+              className="my-12"
+              style={{ transform: "scale(0.9)", transformOrigin: "center" }}
             >
-              <video
-                src="/videos/phia-voter-side.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-                style={{
-                  display: "block",
-                  width: "125%",
-                  transform: "translateX(-33%)",
-                  height: "auto",
-                  clipPath: "inset(0% 33% 1px 0 round 20px)",
-                }}
-              />
+              <div className="relative phia-bo phia-bo-side">
+                <video
+                  src="/videos/phia-voter-side.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                />
+              </div>
             </div>
 
             <h2
@@ -779,9 +755,7 @@ export default function PhiaCaseStudy() {
               }}
             >
               I identified five metrics to measure whether Circle Vote actually
-              works. The two flows I&apos;d prioritize next: the circle creation
-              process and a personal votes dashboard where users can track
-              active votes and see how their circle responded.
+              works.
             </p>
 
             {/* Five-metric board — 90% of the content column width, centered */}
@@ -797,6 +771,17 @@ export default function PhiaCaseStudy() {
                 quality={95}
               />
             </div>
+            <p
+              className="font-sans font-normal leading-relaxed"
+              style={{
+                fontSize: "clamp(0.875rem, 1.325vw, 0.975rem)",
+                color: "#5e5e5e",
+              }}
+            >
+              The two flows I&apos;d prioritize next: the circle creation
+              process and a personal votes dashboard where users can track
+              active votes and see how their circle responded.
+            </p>
           </section>
 
           {/* ── Reflections ───────────────────────────────────────────────── */}
@@ -883,6 +868,51 @@ export default function PhiaCaseStudy() {
       <Footer />
 
       <style>{`
+        /* ── Break-out crop videos ──────────────────────────────────────
+           Desktop: a 1.5× break-out wider than the text column, with the
+           inner video scaled to 125% + shifted + clip-path-cropped to frame
+           the phone. On phones (<768px) the break-out collapses to a plain,
+           centered, full-column video so it never overflows the screen or
+           gets pushed off the right edge — the content stays flexible to the
+           viewport. The clip-path crop is kept; only the enlargement and the
+           horizontal shift are dropped. */
+        .phia-bo {
+          width: 150%;
+          margin-left: -25%;
+          margin-right: -25%;
+          overflow: hidden;
+        }
+        .phia-bo > video {
+          display: block;
+          width: 125%;
+          height: auto;
+        }
+        .phia-bo-ui { transform: translateX(20%); }
+        .phia-bo-ui > video {
+          transform: translateX(-20%);
+          clip-path: inset(5% 20% 5% 0);
+        }
+        .phia-bo-side {
+          transform: translateX(33%);
+          border-radius: 20px;
+        }
+        .phia-bo-side > video {
+          transform: translateX(-33%);
+          clip-path: inset(0% 33% 1px 0 round 20px);
+        }
+        @media (max-width: 767px) {
+          .phia-bo {
+            width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+            transform: none;
+          }
+          .phia-bo > video {
+            width: 100%;
+            transform: none;
+          }
+        }
+
         .phia-card-float {
           animation: phia-card-float 2.7s ease-in-out infinite;
           will-change: transform;

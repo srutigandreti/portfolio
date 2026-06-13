@@ -61,19 +61,6 @@ export default function MysaCaseStudy() {
             </strong>
           </h1>
 
-          {/* Lede */}
-          <p
-            className="font-sans font-normal leading-relaxed mb-12"
-            style={{
-              fontSize: "clamp(1.025rem, 1.75vw, 1.175rem)",
-              color: "#5e5e5e",
-            }}
-          >
-            Mysa reached 15,000 signups in its first month — driven mostly by
-            social marketing. This is the brand I built from scratch that made
-            it possible.
-          </p>
-
           {/* Meta table */}
           <div
             className="grid grid-cols-2 md:grid-cols-4 gap-y-3 mb-14 border-t border-b py-8"
@@ -102,6 +89,19 @@ export default function MysaCaseStudy() {
             ))}
           </div>
 
+          {/* Lede */}
+          <p
+            className="font-sans font-normal leading-relaxed mb-12"
+            style={{
+              fontSize: "clamp(1.025rem, 1.75vw, 1.175rem)",
+              color: "#5e5e5e",
+            }}
+          >
+            Mysa reached 15,000 signups in its first month, driven mostly by
+            social marketing. This is the brand I built from scratch that made
+            it possible.
+          </p>
+
           {/* ── The Challenge ───────────────────────────────────────── */}
           <section className="mb-0">
             <h2
@@ -126,7 +126,7 @@ export default function MysaCaseStudy() {
             <p
               className="font-sans font-normal leading-relaxed"
               style={{
-                fontSize: "clamp(1rem, 1.625vw, 1.125rem)",
+                fontSize: "clamp(0.875rem, 1.325vw, 0.975rem)",
                 color: "#5e5e5e",
               }}
             >

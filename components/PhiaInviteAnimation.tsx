@@ -16,8 +16,8 @@ const BUBBLE_GRAY = "#E5E5EA";
 const DOT_GRAY = "#93939B";
 
 // Natural pixel sizes of the two exported bubble PNGs.
-const BLUE = { w: 1832, h: 636 };
-const GRAY = { w: 1380, h: 275 };
+const BLUE = { w: 1808, h: 612 };
+const GRAY = { w: 1356, h: 251 };
 
 // "Pop" used by every bubble as it enters — fade + slight rise + scale with a
 // gentle overshoot, anchored to the bubble's own tail corner.
@@ -75,7 +75,7 @@ export default function PhiaInviteAnimation() {
       <div className="flex justify-end">
         <div style={{ width: "76%", ...pop(blueIn, "bottom right") }}>
           <Image
-            src="/images/phia-imessage-blue.png"
+            src="/images/phia-imessage-blue-v2.png"
             alt="Text invite: Inviting you to Phia, a shopping app that tells you if you're getting a good deal."
             width={BLUE.w}
             height={BLUE.h}
@@ -93,7 +93,7 @@ export default function PhiaInviteAnimation() {
         {/* Gray reply (reserves the row height even while hidden) */}
         <div style={{ width: "54%", ...pop(grayIn, "bottom left") }}>
           <Image
-            src="/images/phia-imessage-gray.png"
+            src="/images/phia-imessage-gray-v2.png"
             alt="Reply: Ooh the app seems cool. Thanks for sharing Priya!"
             width={GRAY.w}
             height={GRAY.h}
