@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from "react";
 import TransitionLink from "@/components/TransitionLink";
+import PigeonWalk from "@/components/PigeonWalk";
 
 // ─── Noise helpers ────────────────────────────────────────────────────────────
 function hash(x: number, y: number) {
@@ -350,7 +351,7 @@ export default function Footer({ bg: _bg }: { bg?: string }) {
   return (
     <footer
       ref={footerRef}
-      className="relative px-[7%] pt-8 pb-16 overflow-hidden"
+      className="relative px-[7%] pt-8 pb-32 md:pb-44 overflow-hidden"
     >
       <canvas
         ref={canvasRef}
@@ -367,14 +368,14 @@ export default function Footer({ bg: _bg }: { bg?: string }) {
             the surface
           </p>
           <p className="font-sans text-[10px] tracking-[0.04em] text-ink-muted mt-3">
-            Handcrafted with Next.js + homemade matcha
+            Handcrafted with Next.js & lots of love © 2026 Sruti Gandreti
           </p>
         </div>
 
         <nav className="grid grid-cols-2 gap-x-14 gap-y-3 shrink-0 self-start">
           <TransitionLink
             href="/#work"
-            className="font-sans font-normal text-[11px] tracking-[0.04em] uppercase text-ink hover:text-brown transition-colors"
+            className="font-sans font-normal text-[11px] tracking-[0.04em] uppercase text-ink nav-hover-brown"
           >
             Work
           </TransitionLink>
@@ -382,13 +383,13 @@ export default function Footer({ bg: _bg }: { bg?: string }) {
             href="https://linkedin.com/in/srutigandreti"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-sans font-normal text-[11px] tracking-[0.04em] uppercase text-ink hover:text-brown transition-colors"
+            className="font-sans font-normal text-[11px] tracking-[0.04em] uppercase text-ink nav-hover-brown"
           >
             LinkedIn
           </TransitionLink>
           <TransitionLink
             href="/playground"
-            className="font-sans font-normal text-[11px] tracking-[0.04em] uppercase text-ink hover:text-brown transition-colors"
+            className="font-sans font-normal text-[11px] tracking-[0.04em] uppercase text-ink nav-hover-brown"
           >
             Playground
           </TransitionLink>
@@ -396,24 +397,27 @@ export default function Footer({ bg: _bg }: { bg?: string }) {
             href="https://drive.google.com/file/d/1Lued8POPuSK2Oi7GD0AbduP6jypLsxh_/view?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-sans font-normal text-[11px] tracking-[0.04em] uppercase text-ink hover:text-brown transition-colors"
+            className="font-sans font-normal text-[11px] tracking-[0.04em] uppercase text-ink nav-hover-brown"
           >
             Resume
           </TransitionLink>
           <TransitionLink
             href="/about"
-            className="font-sans font-normal text-[11px] tracking-[0.04em] uppercase text-ink hover:text-brown transition-colors"
+            className="font-sans font-normal text-[11px] tracking-[0.04em] uppercase text-ink nav-hover-brown"
           >
             About
           </TransitionLink>
           <TransitionLink
             href="mailto:sruti.gandreti@gmail.com"
-            className="font-sans font-normal text-[11px] tracking-[0.04em] uppercase text-ink hover:text-brown transition-colors"
+            className="font-sans font-normal text-[11px] tracking-[0.04em] uppercase text-ink nav-hover-brown"
           >
             Contact
           </TransitionLink>
         </nav>
       </div>
+
+      {/* Pigeon waddling along the footer's bottom edge */}
+      <PigeonWalk />
     </footer>
   );
 }

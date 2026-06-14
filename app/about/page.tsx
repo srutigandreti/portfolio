@@ -42,10 +42,10 @@ export default function AboutPage() {
                 alt="Sruti Gandreti — Creative Technologist badge"
                 width={3676}
                 height={9212}
-                sizes="(min-width: 1024px) 300px, 225px"
+                sizes="(min-width: 1024px) 300px, 180px"
                 quality={95}
                 priority
-                className="block h-auto mx-auto lg:mx-0 w-[min(225px,calc((100svh-56px)*0.399))] md:w-[min(225px,calc((100svh-64px)*0.399))] lg:w-[min(300px,calc((100svh-112px)*0.399))]"
+                className="block h-auto mx-auto lg:mx-0 w-[min(180px,calc((100svh-56px)*0.3192))] md:w-[min(180px,calc((100svh-64px)*0.3192))] lg:w-[min(300px,calc((100svh-112px)*0.399))]"
               />
             </div>
 
@@ -67,7 +67,7 @@ export default function AboutPage() {
                   color: "#5e5e5e",
                 }}
               >
-                Product designer driven by curiosity, purpose, and a love for
+                A product designer driven by curiosity, purpose, and a love for
                 creating.
               </p>
 
@@ -264,7 +264,7 @@ export default function AboutPage() {
                     className="font-sans leading-snug"
                     style={{ fontSize: "0.85rem", color: "#8b6b41" }}
                   >
-                    Human-Computer Interaction + Media Threads
+                    Human-Computer Interaction and Media Threads
                   </p>
                 </div>
               </section>

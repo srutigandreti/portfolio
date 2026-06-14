@@ -886,12 +886,21 @@ export default function PhiaCaseStudy() {
           height: auto;
         }
         .phia-bo-ui {
+          /* Wider break-out + tighter side crop than the base so the phone
+             reads bigger and more portrait — closer to the voter-side video.
+             Wrapper/video translateX stay mirrored, which keeps it centred. */
+          width: 141.75%;
+          margin-left: -20.875%;
+          margin-right: -20.875%;
           transform: translateX(20%);
           border-radius: 20px;
         }
         .phia-bo-ui > video {
           transform: translateX(-20%);
-          clip-path: inset(5% 20% 5% 20% round 20px);
+          /* 33% side crop matches the voter-side video's effective side
+             cropping (it shows roughly its middle third), so the first video
+             is no longer wider than the second. */
+          clip-path: inset(5% 33% 5% 33% round 20px);
         }
         .phia-bo-side {
           transform: translateX(33%);
@@ -907,21 +916,21 @@ export default function PhiaCaseStudy() {
           transform-origin: center;
         }
         @media (max-width: 767px) {
-          /* Mobile-vote-UI video on phones: a centered break-out sized so its
-             middle-60% crop (clip-path insets 20% each side) fills ~96% of the
-             content column. The clip is symmetric and the wrapper is centered
-             (symmetric negative margins, no translateX), so the visible frame
-             is centered in the column. Width 160% → visible ≈ 0.6 × 1.6 =
-             0.96 of the column. */
+          /* Mobile-vote-UI video on phones: a centered break-out, 50% bigger
+             than before (width ×1.5 → taller frame) with a tighter side crop
+             (33% each side, matching the voter-side video) so it reads as the
+             same portrait aspect. Symmetric margins + symmetric clip + no
+             translateX keep the visible frame centered in the column. */
           .phia-bo-ui {
-            width: 160%;
-            margin-left: -30%;
-            margin-right: -30%;
+            width: 222.75%;
+            margin-left: -61.375%;
+            margin-right: -61.375%;
             transform: none;
           }
           .phia-bo-ui > video {
             width: 100%;
             transform: none;
+            clip-path: inset(5% 33% 5% 33% round 20px);
           }
           /* Voter-side: drop the 0.9 shrink and widen the break-out so the
              cropped frame grows to ~content width. All crop values stay

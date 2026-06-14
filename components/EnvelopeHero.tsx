@@ -53,12 +53,14 @@ export default function EnvelopeHero({
         onMouseLeave={() => setRotated(false)}
       >
         <Image
-          src="/images/envelope.png"
+          src="/images/envelope-v3.png"
           alt="A letter from Sruti"
           width={540}
           height={680}
           className="w-full h-auto drop-shadow-xl cursor-pointer transition-transform duration-300 ease-out"
           style={{ transform: rotated ? "rotate(-3deg)" : undefined }}
+          sizes="480px"
+          quality={95}
           priority
         />
       </div>

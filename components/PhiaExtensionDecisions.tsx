@@ -150,6 +150,23 @@ export default function PhiaExtensionDecisions() {
             />
           </>
         )}
+
+        {/* Mobile: decision explanation overlaps the bottom ~20% of the
+            extension image (anchored to the image's bottom edge) instead of
+            sitting below it. The bubble is scaled compact so it stays within
+            that bottom band. */}
+        {isMobile && carouselIdx > 0 && (
+          <div
+            className="absolute left-[4%] right-[4%] bottom-[3%]"
+            aria-live="polite"
+          >
+            <MobileDecisionBubble
+              // Re-mount on slide change so the dissolve-in animation replays
+              key={carouselIdx}
+              decision={DECISIONS[carouselIdx - 1]}
+            />
+          </div>
+        )}
       </div>
 
       {/* Mobile: instruction text hugs the bottom of the extension image */}
@@ -168,25 +185,6 @@ export default function PhiaExtensionDecisions() {
           Click the arrows on either side to see the decisions made
         </p>
       )}
-
-      {/* Mobile: decision card sits under the instruction text so the
-          bubble's content never obscures the UI it's annotating. Fixed
-          min-height prevents the page from jumping when slides change. */}
-      {isMobile && (
-        <div
-          className="max-w-[480px] mx-auto mt-4 px-4"
-          style={{ minHeight: "11em" }}
-          aria-live="polite"
-        >
-          {carouselIdx > 0 && (
-            <MobileDecisionBubble
-              // Re-mount on slide change so the dissolve-in animation replays
-              key={carouselIdx}
-              decision={DECISIONS[carouselIdx - 1]}
-            />
-          )}
-        </div>
-      )}
     </div>
   );
 }
@@ -196,11 +194,13 @@ function MobileDecisionBubble({ decision }: { decision: Decision }) {
     <div
       style={{
         backgroundColor: "#000",
-        padding: "1.1em 1.25em 1.2em",
-        borderRadius: "14px",
+        // Sized to sit within the bottom ~30% of the extension image it now
+        // overlaps.
+        padding: "0.85em 1em 0.95em",
+        borderRadius: "13px",
         fontFamily: '"PPNeueMontreal", ui-sans-serif, system-ui, sans-serif',
         fontWeight: 500,
-        fontSize: "clamp(0.85rem, 2.6vw, 1rem)",
+        fontSize: "clamp(0.72rem, 2.5vw, 0.95rem)",
         lineHeight: 1.25,
         color: "#fff",
         boxShadow: "0 6px 14px rgba(0,0,0,0.22), 0 18px 38px rgba(0,0,0,0.18)",
@@ -218,7 +218,7 @@ function MobileDecisionBubble({ decision }: { decision: Decision }) {
       <div
         className="font-sans"
         style={{
-          paddingTop: "1.1em",
+          paddingTop: "0.8em",
           fontWeight: 400,
           lineHeight: 1.35,
           color: "#B7B7B7",

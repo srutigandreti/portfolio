@@ -74,6 +74,56 @@ a {
   text-decoration: none;
 }
 
+/* Header/footer nav-link hover → dark brown. Uses a plain :hover rule rather
+   than Tailwind's hover: utility, which is gated behind @media (hover: hover).
+   That gate fails on Windows touchscreen laptops (and DevTools device mode),
+   where the primary pointer reports as touch — so the hover colour never
+   showed even with a mouse. This applies regardless of pointer type. */
+.nav-hover-brown {
+  transition: color 150ms ease;
+}
+.nav-hover-brown:hover {
+  color: #664111;
+}
+
+/* ── Footer pigeon walk ─────────────────────────────────────────────────
+   A pigeon waddles along the bottom of the footer, left → right, then turns
+   and walks back. The track is inset to the footer's 7% content gutter so the
+   bird stays within the content area at every window size.
+
+   Position is driven by a single JS clock (PigeonWalk.tsx) via the --progress
+   variable (0 → 1 → 0). The bird's left is `progress × (track width − its own
+   width)`, computed in CSS so it's always responsive to the live track width,
+   while the SAME progress phase picks the facing frames in JS — so the
+   direction can never drift out of sync with the motion. */
+.pigeon-track {
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  bottom: 12px;
+  height: clamp(81px, 12.15vw, 113px);
+  pointer-events: none;
+  z-index: 20;
+}
+.pigeon-mover {
+  --pigeon-w: clamp(81px, 12.15vw, 113px);
+  --progress: 0;
+  position: absolute;
+  bottom: 0;
+  left: calc((100% - var(--pigeon-w)) * var(--progress));
+  width: var(--pigeon-w);
+  aspect-ratio: 988 / 854; /* source frame ratio */
+}
+.pigeon-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom center; /* feet stay on the ground line as frames swap */
+  max-width: none;
+}
+
 @keyframes dissolve-in {
   from {
     opacity: 0;

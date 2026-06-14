@@ -8,7 +8,7 @@ export default function Header({ bg = "bg-beige/90" }: { bg?: string }) {
     >
       <TransitionLink
         href="/"
-        className="text-[12px] md:text-[14px] tracking-[0.04em] uppercase text-ink font-normal whitespace-nowrap"
+        className="text-[12px] md:text-[14px] tracking-[0.04em] uppercase text-ink font-normal whitespace-nowrap nav-hover-brown"
       >
         Sruti Gandreti
       </TransitionLink>
@@ -19,19 +19,19 @@ export default function Header({ bg = "bg-beige/90" }: { bg?: string }) {
       <nav className="flex items-center gap-4 md:gap-8">
         <TransitionLink
           href="/#work"
-          className="text-[12px] md:text-[14px] tracking-[0.04em] uppercase text-ink font-normal hover:text-ink-muted transition-colors"
+          className="text-[12px] md:text-[14px] tracking-[0.04em] uppercase text-ink font-normal nav-hover-brown"
         >
           Work
         </TransitionLink>
         <TransitionLink
           href="/playground"
-          className="text-[12px] md:text-[14px] tracking-[0.04em] uppercase text-ink font-normal hover:text-ink-muted transition-colors"
+          className="text-[12px] md:text-[14px] tracking-[0.04em] uppercase text-ink font-normal nav-hover-brown"
         >
           Playground
         </TransitionLink>
         <TransitionLink
           href="/about"
-          className="text-[12px] md:text-[14px] tracking-[0.04em] uppercase text-ink font-normal hover:text-ink-muted transition-colors"
+          className="text-[12px] md:text-[14px] tracking-[0.04em] uppercase text-ink font-normal nav-hover-brown"
         >
           About
         </TransitionLink>

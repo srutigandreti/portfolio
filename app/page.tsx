@@ -169,11 +169,13 @@ export default function HomePage() {
 
         <div className="relative w-[80vw] max-w-[375px] mx-auto mb-12">
           <Image
-            src="/images/envelope.png"
+            src="/images/envelope-v3.png"
             alt="A letter from Sruti"
             width={540}
             height={680}
             className="w-full h-auto drop-shadow-xl"
+            sizes="(max-width: 768px) 80vw, 375px"
+            quality={95}
             priority
           />
           <div className="absolute top-[6%] right-[3%] w-[22%]">
