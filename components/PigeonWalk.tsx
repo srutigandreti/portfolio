@@ -7,14 +7,14 @@ import { useEffect, useRef, useState } from "react";
 // leg cycle nor the direction swap ever flickers from a lazy-loaded src.
 const FRAMES = {
   r: [
-    "/images/pigeon-both-down-r-v3.png",
-    "/images/pigeon-left-leg-up-r-v3.png",
-    "/images/pigeon-right-leg-up-r-v3.png",
+    "/images/pigeon-both-down-r-v5.png",
+    "/images/pigeon-left-leg-up-r-v5.png",
+    "/images/pigeon-right-leg-up-r-v5.png",
   ],
   l: [
-    "/images/pigeon-both-down-l-v3.png",
-    "/images/pigeon-left-leg-up-l-v3.png",
-    "/images/pigeon-right-leg-up-l-v3.png",
+    "/images/pigeon-both-down-l-v5.png",
+    "/images/pigeon-left-leg-up-l-v5.png",
+    "/images/pigeon-right-leg-up-l-v5.png",
   ],
 } as const;
 
