@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 
 const PASSWORD = "s9wc7IjbM7a57ssF";
@@ -13,6 +13,16 @@ export default function StarwoodPasswordGate({
   const [unlocked, setUnlocked] = useState(false);
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function copyEmail() {
+    navigator.clipboard.writeText("sruti.gandreti@gmail.com").then(() => {
+      setCopied(true);
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+      copyTimerRef.current = setTimeout(() => setCopied(false), 2100);
+    });
+  }
 
   function attemptUnlock() {
     if (value === PASSWORD) {
@@ -52,13 +62,73 @@ export default function StarwoodPasswordGate({
           }}
         >
           Want to see it?{" "}
-          <a
-            href="mailto:sruti.gandreti@gmail.com"
-            aria-label="Email Sruti to request password"
-            className="text-[#3B2100]! transition-colors duration-150 hover:text-[#2563eb]!"
+          <button
+            type="button"
+            onClick={copyEmail}
+            aria-label="Copy email address to clipboard"
+            className="relative inline-flex items-baseline gap-[0.2em] text-[#3B2100] transition-colors duration-150 hover:text-[#2563eb] cursor-pointer border-0 bg-transparent p-0"
+            style={{
+              fontFamily: "inherit",
+              fontSize: "inherit",
+              fontWeight: "inherit",
+            }}
           >
-            Contact
-          </a>{" "}
+            {copied && (
+              <span
+                className="absolute left-1/2 pointer-events-none select-none"
+                style={{
+                  bottom: "calc(100% + 3px)",
+                  transform: "translateX(-50%)",
+                  fontSize: "0.68em",
+                  color: "#ffffff",
+                  whiteSpace: "nowrap",
+                  fontFamily: '"Unbounded", sans-serif',
+                  fontWeight: 400,
+                  animation: "fade-in-up 2s ease-out forwards",
+                }}
+              >
+                Copied!
+              </span>
+            )}
+            Email
+            {/* copy icon: two stacked rounded rectangles */}
+            <svg
+              width="0.85em"
+              height="0.85em"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden
+              style={{
+                display: "inline",
+                verticalAlign: "middle",
+                marginBottom: "0.1em",
+              }}
+            >
+              {/* back rect */}
+              <rect
+                x="8"
+                y="2"
+                width="13"
+                height="16"
+                rx="3"
+                ry="3"
+                stroke="currentColor"
+                strokeWidth="1.75"
+              />
+              {/* front rect */}
+              <rect
+                x="3"
+                y="7"
+                width="13"
+                height="15"
+                rx="3"
+                ry="3"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                fill="#AD8A59"
+              />
+            </svg>
+          </button>{" "}
           me.
         </p>
 
