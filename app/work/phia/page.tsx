@@ -36,7 +36,7 @@ export default function PhiaCaseStudy() {
           style={{ aspectRatio: "2.5/1" }}
         >
           <Image
-            src="/images/phia-banner.png"
+            src="/images/phia-banner-v2.png"
             alt="Phia"
             fill
             className="object-contain"

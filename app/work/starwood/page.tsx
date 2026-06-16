@@ -42,7 +42,7 @@ export default function StarwoodCaseStudy() {
           style={{ aspectRatio: "2.5/1" }}
         >
           <Image
-            src="/images/starwood-banner-v2.png"
+            src="/images/starwood-banner-v3.png"
             alt="Starwood"
             fill
             className="object-contain"

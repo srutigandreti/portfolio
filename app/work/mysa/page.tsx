@@ -33,7 +33,7 @@ export default function MysaCaseStudy() {
           style={{ aspectRatio: "2.5/1" }}
         >
           <Image
-            src="/images/mysa-banner-v4.png"
+            src="/images/mysa-banner-v5.png"
             alt="Mysa"
             fill
             className="object-contain"

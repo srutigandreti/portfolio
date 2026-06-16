@@ -74,6 +74,20 @@ export default function PhiaExtensionDecisions() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
+  // Desktop: clicking anywhere outside an expanded bubble collapses it. A
+  // click that lands on a bubble is ignored here so the bubble's own toggle
+  // handles it (and so opening one doesn't immediately re-collapse).
+  useEffect(() => {
+    if (activeId === null) return;
+    const onDocClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-decision-bubble]")) return;
+      setActiveId(null);
+    };
+    document.addEventListener("click", onDocClick);
+    return () => document.removeEventListener("click", onDocClick);
+  }, [activeId]);
+
   // Which decision's overlay PNG should be visible on the extension image.
   // Desktop: whichever bubble the user has clicked open.
   // Mobile: whichever carousel slide is showing (none on landing).
@@ -402,6 +416,7 @@ function DecisionBubble({
   return (
     <button
       type="button"
+      data-decision-bubble
       onClick={onToggle}
       aria-expanded={isActive}
       aria-hidden={isHidden}
