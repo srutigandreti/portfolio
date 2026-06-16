@@ -176,25 +176,33 @@ export default function StarwoodPhaseThree() {
   const [active, setActive] = useState(0);
 
   useEffect(() => {
-    const onScroll = () => {
+    const update = () => {
       const el = containerRef.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
+      // The pinned panel fills the full viewport (top: 0, height: 100vh), so
+      // the panel travels exactly `offsetHeight - innerHeight` while stuck and
+      // the pin engages at rect.top === 0. That makes progress 0→1 line up
+      // 1:1 with the pinned range — every third of it maps to one section.
       const scrollable = el.offsetHeight - window.innerHeight;
       if (scrollable <= 0) return;
       const progress = Math.max(0, Math.min(1, -rect.top / scrollable));
       setActive(Math.min(2, Math.floor(progress * 3)));
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    update();
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
   }, []);
 
   return (
     <div ref={containerRef} style={{ height: "300vh" }}>
       <div
-        className="sticky top-16 flex items-center overflow-hidden"
-        style={{ height: "calc(100vh - 4rem)", background: "#eeebe3" }}
+        className="sticky top-0 flex items-center overflow-hidden"
+        style={{ height: "100vh", background: "#eeebe3" }}
       >
         {/* Constrain to same max-width as page content */}
         <div className="w-full max-w-[1000px] mx-auto px-6 md:px-[60px]">

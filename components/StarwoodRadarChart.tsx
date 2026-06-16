@@ -227,7 +227,11 @@ export default function StarwoodRadarChart() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
+          // minmax(0, 1fr), not bare 1fr: bare 1fr's implicit min track size is
+          // "auto" (the content's min-content width), so on narrow screens the
+          // three cards' padding + text floor the grid wider than the page's
+          // max content width. minmax(0, 1fr) lets tracks shrink past that.
+          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
           gap: "12px",
         }}
       >
@@ -235,9 +239,10 @@ export default function StarwoodRadarChart() {
           <div
             key={label}
             style={{
+              minWidth: 0,
               background: "rgba(94,94,94,0.05)",
               borderRadius: "8px",
-              padding: "16px 20px",
+              padding: "16px clamp(10px, 4vw, 20px)",
             }}
           >
             <p
@@ -255,7 +260,7 @@ export default function StarwoodRadarChart() {
               style={{
                 fontFamily:
                   '"PPNeueMontreal", ui-sans-serif, system-ui, sans-serif',
-                fontSize: "1.9rem",
+                fontSize: "clamp(1.3rem, 6vw, 1.9rem)",
                 fontWeight: 500,
                 color: "#088FE0",
                 lineHeight: 1,

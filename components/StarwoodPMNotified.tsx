@@ -24,19 +24,28 @@ export default function StarwoodPMNotified() {
         style={{
           display: "inline-flex",
           alignItems: "center",
-          gap: "10px",
-          padding: "12px 24px",
+          gap: "clamp(8px, 2.5vw, 10px)",
+          padding: "clamp(10px, 3vw, 12px) clamp(18px, 5vw, 24px)",
           borderRadius: "999px",
           border: "2px solid #22c55e",
           background: "rgba(34,197,94,0.1)",
           whiteSpace: "nowrap",
+          maxWidth: "100%",
         }}
       >
-        {/* Bell icon */}
-        <span className="sw-bell">
+        {/* Bell icon — sized in clamp() rem, not fixed px, so it scales with
+            the rest of the page's type instead of staying pinned at one size
+            regardless of viewport. */}
+        <span
+          className="sw-bell"
+          style={{
+            width: "clamp(22px, 6vw, 26px)",
+            height: "clamp(22px, 6vw, 26px)",
+          }}
+        >
           <svg
-            width="22"
-            height="22"
+            width="100%"
+            height="100%"
             viewBox="0 0 24 24"
             fill="none"
             stroke="#22c55e"
@@ -54,7 +63,7 @@ export default function StarwoodPMNotified() {
             fontFamily:
               '"PPNeueMontreal", ui-sans-serif, system-ui, sans-serif',
             fontWeight: 500,
-            fontSize: "1rem",
+            fontSize: "clamp(0.9rem, 2.8vw, 1rem)",
             color: "#22c55e",
             letterSpacing: "0.01em",
           }}

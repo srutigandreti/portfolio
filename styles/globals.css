@@ -25,12 +25,19 @@ body {
   scroll-behavior: smooth;
   /* Stop any rogue wide element (e.g. a full-bleed break-out) from making
      the page wider than the viewport. This MUST be on <html> too, not just
-     <body>: on mobile browsers `overflow-x: hidden` on <body> alone does not
-     constrain the layout viewport, so the page still grows wider than the
-     screen and the browser auto-zooms out — which reads as the site being
-     "zoomed in" with empty space on the right. Clipping at the root keeps
-     the layout viewport pinned to the device width at every screen size. */
-  overflow-x: hidden;
+     <body>: on mobile browsers clipping on <body> alone does not constrain
+     the layout viewport, so the page still grows wider than the screen and
+     the browser auto-zooms out — which reads as the site being "zoomed in"
+     with empty space on the right. Clipping at the root keeps the layout
+     viewport pinned to the device width at every screen size.
+
+     Use `clip`, NOT `hidden`: `overflow-x: hidden` makes <body> a scroll
+     container (overflow-y computes to auto) that never actually scrolls —
+     which breaks `position: sticky` on every descendant (e.g. the pinned
+     scroll panel in StarwoodPhaseThree). `clip` clips the same way but does
+     NOT establish a scroll container, so sticky keeps working against the
+     viewport. */
+  overflow-x: clip;
   max-width: 100%;
 }
 

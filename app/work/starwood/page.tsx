@@ -991,9 +991,11 @@ export default function StarwoodCaseStudy() {
 
           {/* ── Bonus: PM Notifications ──────────────────────────────────── */}
           <section className="mt-20">
-            {/* Top row: text left, pill right */}
-            <div className="flex items-start gap-10 mb-8">
-              <div className="w-1/2">
+            {/* Top row: text left, pill right — stacks on mobile so the pill
+                isn't squeezed into a half-width column too narrow for its
+                nowrap content, which was clipping it on small screens */}
+            <div className="flex flex-col md:flex-row items-start gap-6 md:gap-10 mb-8">
+              <div className="w-full md:w-1/2">
                 <h2
                   className="mb-5"
                   style={{
@@ -1020,7 +1022,7 @@ export default function StarwoodCaseStudy() {
                   could auto-ping, that&apos;s another 5–10 minutes saved.
                 </p>
               </div>
-              <div className="w-1/2 flex items-center justify-center pt-2">
+              <div className="w-full md:w-1/2 flex items-center justify-center pt-2">
                 <StarwoodPMNotified />
               </div>
             </div>
