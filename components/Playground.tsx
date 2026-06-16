@@ -1029,6 +1029,8 @@ export default function Playground() {
                 src={photo.src}
                 alt=""
                 draggable={false}
+                loading="lazy"
+                decoding="async"
               />
               <div className={styles.caption}>
                 {photo.location} · {photo.year}

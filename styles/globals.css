@@ -34,6 +34,13 @@ body {
   max-width: 100%;
 }
 
+/* Beige lives on <html> too so that while <body> fades in (opacity < 1) the
+   backdrop showing through stays beige — never a flash of white from the
+   default root background. */
+html {
+  background-color: var(--color-beige);
+}
+
 body {
   min-height: 100vh;
   text-rendering: optimizeLegibility;
@@ -44,6 +51,11 @@ body {
   font-synthesis: none;
   color: #5e5e5e;
   position: relative;
+  /* The page fade-in (opacity 0 → 1) is defined by render-blocking inline CSS
+     in <head> (see app/layout.tsx) so the very first paint is already at
+     opacity 0 — never a frame of visible content before the fade. The
+     `.page-ready` class (added by PageTransition once the DOM is ready)
+     transitions opacity to 1. */
 }
 
 img,
